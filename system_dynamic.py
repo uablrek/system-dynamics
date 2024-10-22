@@ -4,6 +4,7 @@
 # Contributor: Alexandre GONDRAN
 
 # julien.legavre@alumni.enac.fr
+# Updated 2024 by Lars Ekman <uablrek@gmail.com> (@uablrek at github)
 
 # This software is a computer program whose purpose is to produce the results
 # of the World3 model described in "The Limits to Growth" and
@@ -38,10 +39,7 @@
 # license and that you accept its terms.
 #############################################################################
 
-# It is recommended to read the note named "MyWorld3: Equations and
-# Explanations" before using/modifying this code.
-
-# Updated by Lars Ekman <uablrek@gmail.com> (@uablrek at github)
+# Updates:
 # - Rename class World3->System and simplify
 # - Plot and graph functions
 # - Boundaries (max, min) in stocks
@@ -164,8 +162,12 @@ class NodeFlow(Node):
         self.hist = []
 
     def eval(self, dt):
+        val = self.cons(*[p.val for p in self.pred])
+        if val == None:
+            self.hist.append(val)
+            return
         x = 1 if self.sign >= 0 else -1
-        self.val = self.cons(*[p.val for p in self.pred]) * x
+        self.val = val * x
         if self.save:
             self.hist.append(self.val * x) # (saved values should be positive)
         if self.trace:
@@ -400,8 +402,9 @@ class System:
         self.nodesrank += self.stocks
 
     # Plot node histories against time (x-axis)
-    def plot_nodes(self, nodes, title=None):
+    def plot_nodes(self, nodes, title=None, size=(10,5)):
         # https://matplotlib.org/stable/gallery/spines/multiple_yaxis_with_spines.html
+        plt.rcParams["figure.figsize"] = size
         if not nodes:
             return
         fig, ax = plt.subplots()
@@ -409,6 +412,9 @@ class System:
             fig.suptitle(title)
         ax.set(xlabel=self.time_unit)
         s = nodes[0]
+        if type(s) is tuple:
+            s, lim = s
+            ax.set_ylim(lim)
         ax.set(ylabel=f'{s.detail} ({s.unit})')
         i = 0
         times = self.nodes['time'].hist
@@ -419,6 +425,9 @@ class System:
         for s in nodes[1:]:
             i = i + 1
             t = ax.twinx()
+            if type(s) is tuple:
+                s, lim = s
+                t.set_ylim(lim)
             t.set(ylabel=f'{s.detail} ({s.unit})')
             if i > 1:
                 t.spines['right'].set_position(("outward", 50 * (i-1)))
@@ -427,13 +436,23 @@ class System:
             t.yaxis.label.set_color(p.get_color())
             t.tick_params(axis='y', colors=p.get_color())
         fig.tight_layout()
+        ax.grid(axis='x', linestyle=':')
         plt.show()
-    def plot_stocks(self, exclude=['SYSTEM'], title=None):
+    def plot_stocks(self, exclude=['SYSTEM'], title=None, size=(10,5)):
         self.plot_nodes(
             list(filter(lambda s: s.cat not in exclude, self.stocks)),
-            title=title)
-    def plot(self, *nodenames, title=None):
-        self.plot_nodes([self.nodes[x] for x in nodenames], title=title)
+            title=title, size=size)
+    # plot Plot named nodes. The nodenames may be a tuple with an
+    # ylimit, example ('pop', (0,10e9))
+    def plot(self, *nodenames, title=None, size=(10,5)):
+        l = []
+        for x in nodenames:
+            if type(x) is tuple:
+                x, lim = x
+                l.append((self.nodes[x], lim))
+            else:
+                l.append(self.nodes[x])
+        self.plot_nodes(l, title=title, size=size)
 
     # Generate model graph
     def emit_node(self, n):
@@ -561,3 +580,28 @@ def f_sum(*l):
     return sum([float(i) for i in l])
 def f_mul(val, rate):
     return val * rate
+# Interpolate a value from a "TABLE OF CONSTANTS" (CT)
+def f_tab(tab, x):
+    if x < tab[0][0]:       # lower than first
+        return tab[0][1]
+    if x > tab[-1][0]:      # higher than last
+        return tab[-1][1]
+    else:
+        i = 0
+        while i < len(tab):
+            if tab[i][0] <= x <= tab[i+1][0]:
+                coeff = (tab[i+1][1]-tab[i][1]) / (tab[i+1][0]-tab[i][0])
+                return tab[i][1] + coeff * (x-tab[i][0])
+            i += 1
+def f_tabclip(tab, x):
+    if x < tab[0][0]:       # lower than first
+        return None
+    if x > tab[-1][0]:      # higher than last
+        return None
+    else:
+        i = 0
+        while i < len(tab):
+            if tab[i][0] <= x <= tab[i+1][0]:
+                coeff = (tab[i+1][1]-tab[i][1]) / (tab[i+1][0]-tab[i][0])
+                return tab[i][1] + coeff * (x-tab[i][0])
+            i += 1

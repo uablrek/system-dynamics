@@ -3,11 +3,11 @@
 Experiments with [System Dynamics](
 https://en.wikipedia.org/wiki/System_dynamics) (SD) models, mostly in
 Python. The aim is to learn how to write a SD model and to modify the
-`world3` model.  There are several graphic tools for SD, but I prefer
-writing code and generate the model graph afterwards. It's faster and
-more flexible (no tool limitations). Besides, the graphic tools are
-mostly commercial and can't be used on Linux (I use Ubuntu 24.04
-Linux).
+[world3 model](WORLD3.md). There are several graphic tools for SD, but
+I prefer writing code and generate the model graph afterwards. It's
+faster and more flexible (no tool limitations). Besides, the graphic
+tools are mostly commercial and can't be used on Linux (I use Ubuntu
+24.04 Linux).
 
 For Python the `system_dynamic` module from
 [MyWorld3](https://github.com/Juji29/MyWorld3) is used as a
@@ -95,11 +95,3 @@ json.dumps(s.dict_nodes('time', 'pond'))
 
 The `time` stock should always be included.
 
-## World3
-
-The world3 model from [MyWorld3](https://github.com/Juji29/MyWorld3)
-is slightly modified. The BAU2 run gives the expected result, but the
-plot looks different from the LtG plots because different scales are
-used.
-
-<img src="plot_bau2.svg" />

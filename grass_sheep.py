@@ -1,4 +1,5 @@
 #! /usr/bin/python
+# SPDX-License-Identifier: Unlicense
 
 import system_dynamic as sd
 
@@ -88,7 +89,6 @@ if __name__ == "__main__":
         s.graphviz('grass+sheep')
         sys.exit()
     #s.trace("starvation")
-    s.history(True, "starvation", "graze")
     s.run()
-    s.plot_stocks(title='Grass and Sheep')
+    s.plot_stocks(title='Grass and Sheep', size=(8,4))
     #s.plot(["grass", "starvation", "graze"])

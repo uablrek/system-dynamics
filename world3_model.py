@@ -3,6 +3,7 @@
 # Author: Julien LEGAVRE (2022)
 
 # julien.legavre@alumni.enac.fr
+# Updated 2024 by Lars Ekman <uablrek@gmail.com> (@uablrek at github)
 
 # This software is a computer program whose purpose is to produce the results
 # of the World3 model described in "The Limits to Growth" and
@@ -136,53 +137,54 @@ def load(world3, scenario=1, version=2003):
     #########
     # Units #
     #########
-    OY   = world3.addConstant("OY", C, val=1, detail="One year",
-                              unit="year", cat=SYSTEM)
-    UAGI = world3.addConstant("UAGI", C, val=1,
-                              detail="Unit of Agricultural Inputs per Hectare",
-                              cat=AGRICULTURE)
-    UP   = world3.addConstant("UP", C, val=1, detail="Unit of Person",
-                              cat=POPULATION)
-    GDPU = world3.addConstant("GDPU", C, val=1,
-                              detail="Gross Domestic Product Unit",
-                              cat=CAPITAL)
+    OY   = world3.addConstant(
+        "OY", C, val=1, detail="One year", unit="year", cat=SYSTEM)
+    UAGI = world3.addConstant(
+        "UAGI", C, val=1, cat=AGRICULTURE,
+        detail="Unit of Agricultural Inputs per Hectare")
+    UP   = world3.addConstant(
+        "UP", C, val=1, detail="Unit of Person", cat=POPULATION)
+    GDPU = world3.addConstant(
+        "GDPU", C, val=1, detail="Gross Domestic Product Unit", cat=CAPITAL)
 
 
     ######################################
     # Variables close to population #
     ######################################
     world3.cat_default = POPULATION
-    P1I = world3.addConstant("P1I", C, val=6.50e8,
-                       detail="Initial population aged from 0 to 14 years at the year 1900",
-                       unit="person")
+    P1I = world3.addConstant(
+        "P1I", C, val=6.50e8, unit="person",
+        detail="Initial population aged from 0 to 14 years at the year 1900")
     P2I = world3.addConstant(
         "P2I", C, val=7.00e8, unit="person",
         detail="Initial population aged from 15 to 44 years at the year 1900")
-    P3I = world3.addConstant("P3I", C, val=1.90e8,
-                       detail="Initial population aged from 45 to 64 years at the year 1900",
-                       unit="person")
-    P4I = world3.addConstant("P4I", C, val=6.00e7,
-                       detail="Initial population older than adge 65 at the year 1900",
-                       unit="person")
+    P3I = world3.addConstant(
+        "P3I", C, val=1.90e8, unit="person",
+        detail="Initial population aged from 45 to 64 years at the year 1900")
+    P4I = world3.addConstant(
+        "P4I", C, val=6.00e7, unit="person",
+        detail="Initial population older than adge 65 at the year 1900")
 
-    M1 = world3.addConstant("M1", CT, val=([20, 0.0567],
-                                     [30, 0.0366],
-                                     [40, 0.0243],
-                                     [50, 0.0155],
-                                     [60, 0.0082],
-                                     [70, 0.0023],
-                                     [80, 0.001]),
-                      detail="Mortality rate in population aged from 0 to 14 years",
-                      unit=None)
-    M2 = world3.addConstant("M2", CT, val=([20, 0.0266],
-                                     [30, 0.0171],
-                                     [40, 0.011],
-                                     [50, 0.0065],
-                                     [60, 0.004],
-                                     [70, 0.0016],
-                                     [80, 0.0008]),
-                      detail="Mortality rate in population aged from 15 to 44 years",
-                      unit=None)
+    M1 = world3.addConstant(
+        "M1", CT, val=(
+            [20, 0.0567],
+            [30, 0.0366],
+            [40, 0.0243],
+            [50, 0.0155],
+            [60, 0.0082],
+            [70, 0.0023],
+            [80, 0.001]),
+        detail="Mortality rate in population aged from 0 to 14 years")
+    M2 = world3.addConstant(
+        "M2", CT, val=(
+            [20, 0.0266],
+            [30, 0.0171],
+            [40, 0.011],
+            [50, 0.0065],
+            [60, 0.004],
+            [70, 0.0016],
+            [80, 0.0008]),
+        detail="Mortality rate in population aged from 15 to 44 years")
     M3 = world3.addConstant("M3", CT, val=([20, 0.0562],
                                      [30, 0.0373],
                                      [40, 0.0252],
@@ -347,15 +349,17 @@ def load(world3, scenario=1, version=2003):
 
     # FM values depend on the version used
     if version == 1972:
-        FM = world3.addConstant("FM", CT, val=([0, 0],
-                                         [10, 0.2],
-                                         [20, 0.4],
-                                         [30, 0.6],
-                                         [40, 0.8],
-                                         [50, 0.9],
-                                         [60, 1],
-                                         [70, 1.05],
-                                         [80, 1.1]))
+        FM = world3.addConstant(
+            "FM", CT, val=(
+                [0, 0],
+                [10, 0.2],
+                [20, 0.4],
+                [30, 0.6],
+                [40, 0.8],
+                [50, 0.9],
+                [60, 1],
+                [70, 1.05],
+                [80, 1.1]))
     if version == 2003:
         FM = world3.addConstant("FM", CT, val=([0, 0],
                                          [10, 0.2],
@@ -1231,10 +1235,11 @@ def load(world3, scenario=1, version=2003):
         if t <= ts : return c1
         else : return c2
 
+    # Interpolate a value from a "TABLE OF CONSTANTS" (CT)
     def f_tab(tab, x):
-        if tab[0][0] > x:
+        if x < tab[0][0]:       # lower than first
             return tab[0][1]
-        if tab[-1][0] < x:
+        if x > tab[-1][0]:      # higher than last
             return tab[-1][1]
         else:
             i = 0

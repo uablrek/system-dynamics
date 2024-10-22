@@ -47,4 +47,5 @@ if __name__ == "__main__":
         D.val = c
         s.reset()
         s.run(6 + c * 3)
-        s.plot("gate", "stream", "pond", title=f'Delay constant {c}')
+        s.plot(
+            "gate", "stream", "pond", title=f'Delay constant {c}', size=(8,4))
