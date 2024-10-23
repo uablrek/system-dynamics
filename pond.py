@@ -12,6 +12,7 @@
 import system_dynamic as sd
 
 def load_model(s):
+    s.default_sign = 1
     # Constants
     D = s.addConstant(
         'delay_constant', sd.C, detail='Delay constant', unit="?", val=2)

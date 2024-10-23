@@ -51,6 +51,7 @@ def cat_sheep(s):
     s.add_equation(sd.f_sum, sheep, [birth, death])
 
 def load_model(s):
+    s.default_sign = 1
     cat_grass(s)
     cat_sheep(s)
     s.default_cat = None

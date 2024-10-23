@@ -151,7 +151,7 @@ def load(world3, scenario=1, version=2003):
     ######################################
     # Variables close to population #
     ######################################
-    world3.cat_default = POPULATION
+    world3.default_cat = POPULATION
     P1I = world3.addConstant(
         "P1I", C, val=6.50e8, unit="person",
         detail="Initial population aged from 0 to 14 years at the year 1900")
@@ -438,7 +438,7 @@ def load(world3, scenario=1, version=2003):
     ################################
     # Variables close to capital #
     ################################
-    world3.cat_default = CAPITAL
+    world3.default_cat = CAPITAL
     # Related to industry
     ICOR1 = world3.addConstant("ICOR1", C, val=3)
 
@@ -604,7 +604,7 @@ def load(world3, scenario=1, version=2003):
     ##################################
     # Variables close to agriculture #
     ##################################
-    world3.cat_default = AGRICULTURE
+    world3.default_cat = AGRICULTURE
     # Loop 1
     PALT = world3.addConstant("PALT", C, val=3.2e9)
     ALI = world3.addConstant("ALI", C, val=0.9e9)
@@ -947,7 +947,7 @@ def load(world3, scenario=1, version=2003):
     ################################
     # Variables close to resources #
     ################################
-    world3.cat_default = RESOURCES
+    world3.default_cat = RESOURCES
     # NRI values depend on scenario chosen
     NRI0 = 2e12 if scene.more_nonrenewable_resources else 1e12
     NRI = world3.addConstant("NRI", C, val=NRI0)
@@ -1087,7 +1087,7 @@ def load(world3, scenario=1, version=2003):
     ################################
     # Variables close to pollution #
     ################################
-    world3.cat_default = POLLUTION
+    world3.default_cat = POLLUTION
     PPGF1 = world3.addConstant("PPGF1", C, val=1)
 
     # PPGF2 values depend on the version used (is a NodeDelay3 if version is 2003)
@@ -1163,7 +1163,7 @@ def load(world3, scenario=1, version=2003):
     ###########
     # Indexes #
     ###########
-    world3.cat_default = None
+    world3.default_cat = None
 
     POF = world3.addConstant("POF", C, val=0.22)
     HUP = world3.addConstant("HUP", C, val=4)

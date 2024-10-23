@@ -281,12 +281,13 @@ class System:
             "TS", C, val=time_step, detail="time step", cat='SYSTEM')
         t = NodeStock(
             "time", val=init_time, detail="time", unit=time_unit, cat='SYSTEM')
-        self.add_equation(lambda x: 1, t, [TS])
+        self.add_equation(lambda x: 1, t, [TS], sign=0)
         self.nodes = {'TS':TS, 'time':t}
         self.stocks = [t]
         self.time_unit=time_unit
         self.end_time = end_time
         self.default_cat = None
+        self.default_sign = 0
 
     def __repr__(self):
         return "\n".join([str(v) for c,v in self.nodes.items()])
@@ -326,7 +327,8 @@ class System:
         self.add_node(c)
         return c
 
-    def add_equation(self, f, x_target, x_s, sign=1):
+    def add_equation(self, f, x_target, x_s, sign=None):
+        if sign == None: sign = self.default_sign
         x_target.set_cons(f, x_s, sign)
 
     def eval(self, ts):
@@ -593,11 +595,11 @@ def f_tab(tab, x):
                 coeff = (tab[i+1][1]-tab[i][1]) / (tab[i+1][0]-tab[i][0])
                 return tab[i][1] + coeff * (x-tab[i][0])
             i += 1
+# f_tabclip Return None for values out-of-bounds. Use for instance for
+# empirical data that ends in the current year
 def f_tabclip(tab, x):
-    if x < tab[0][0]:       # lower than first
-        return None
-    if x > tab[-1][0]:      # higher than last
-        return None
+    if x < tab[0][0] or x > tab[-1][0]:
+        return None   # out-of-bounds
     else:
         i = 0
         while i < len(tab):
