@@ -404,15 +404,18 @@ class System:
         self.nodesrank += self.stocks
 
     # Plot node histories against time (x-axis)
-    def plot_nodes(self, nodes, title=None, size=(10,5)):
+    def plot_nodes(self, nodes, title=None, size=(10,5), pause=0):
         # https://matplotlib.org/stable/gallery/spines/multiple_yaxis_with_spines.html
-        plt.rcParams["figure.figsize"] = size
         if not nodes:
             return
-        fig, ax = plt.subplots()
+        fig = plt.gcf()         # (Get Current Figure)
+        fig.set_size_inches(size)
+        fig.clear()
         if title:
             fig.suptitle(title)
+        ax = plt.axes()
         ax.set(xlabel=self.time_unit)
+        ax.grid(axis='x', linestyle=':')
         s = nodes[0]
         if type(s) is tuple:
             s, lim = s
@@ -438,15 +441,33 @@ class System:
             t.yaxis.label.set_color(p.get_color())
             t.tick_params(axis='y', colors=p.get_color())
         fig.tight_layout()
-        ax.grid(axis='x', linestyle=':')
-        plt.show()
+        if pause > 0:
+            plt.pause(pause)
+        else:
+            plt.show()
+    # plot_stocks Is a quick an simple way to plot all stocks
     def plot_stocks(self, exclude=['SYSTEM'], title=None, size=(10,5)):
         self.plot_nodes(
             list(filter(lambda s: s.cat not in exclude, self.stocks)),
             title=title, size=size)
-    # plot Plot named nodes. The nodenames may be a tuple with an
-    # ylimit, example ('pop', (0,10e9))
-    def plot(self, *nodenames, title=None, size=(10,5)):
+    # plot Plot named nodes
+    def plot(self, *nodenames, title=None, size=(10,5), pause=0):
+        """Plot named nodes.
+
+        Parameters
+        ----------
+        nodenames: str or tuple
+            Nodes to plot. May be a tuple with an ylimit, example
+            ('pop', (0,10e9))
+        title: str, optional
+            Figure title
+        size: tuple (w,h), default (10,5)
+            Size of the figure (inches)
+        pause: int, default 0 (infinite)
+            Time that the figure is shown, and this function returns.
+            This can be used to create a simple animation. If you want
+            the window to stay open, call matplotlib.pyplot.show()
+        """
         l = []
         for x in nodenames:
             if type(x) is tuple:
@@ -454,7 +475,7 @@ class System:
                 l.append((self.nodes[x], lim))
             else:
                 l.append(self.nodes[x])
-        self.plot_nodes(l, title=title, size=size)
+        self.plot_nodes(l, title=title, size=size, pause=pause)
 
     # Generate model graph
     def emit_node(self, n):

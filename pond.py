@@ -10,6 +10,7 @@
 # To control the gate, re-write f_gate()
 
 import system_dynamic as sd
+import matplotlib.pyplot as plt
 
 def load_model(s):
     s.default_sign = 1
@@ -44,9 +45,11 @@ if __name__ == "__main__":
         s.graphviz(title='pond')
         sys.exit()
     D = s.nodes['delay_constant']
-    for c in [0.5, 1, 2, 4, 8]:
+    for c in [0.5, 1, 2, 4, 6, 8]:
         D.val = c
         s.reset()
-        s.run(6 + c * 3)
+        s.run(20)
         s.plot(
-            "gate", "stream", "pond", title=f'Delay constant {c}', size=(8,4))
+            "gate", "stream", "pond", title=f'Delay constant {c}',
+            size=(8,4), pause=1.5)
+    plt.show()   # keep the window open after the last iteration

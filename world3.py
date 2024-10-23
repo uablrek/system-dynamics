@@ -3,6 +3,8 @@
 import system_dynamic as sd
 import world3_model as world3
 from demographics import load_wpop, load_wle
+import numpy
+import matplotlib.pyplot as plt
 
 # Run a scenario and plot data
 def scenario(scenario):
@@ -20,6 +22,23 @@ def bau2():
     s.plot(
         ("pop",(0,10e9)), ("nr",(0,2e12)), ("io",(0,4e12)), ("f",(0,6e12)),
         ("ppolx",(0,40)), title="State Of The World")
+
+# Animate resources from 1e12 (bau1) to 2e12 (bau2)
+def bau2_animation():
+    s = sd.System(init_time=1900, end_time=2100, time_step=0.5)
+    world3.load(s, scenario=2)
+    NRI = s.nodes['NRI']
+    nr = s.nodes['nr']
+    for r in numpy.linspace(1e12, 2e12, num=10):
+        NRI.val = r
+        nr.hist[0] = r
+        s.reset()
+        s.run()
+        s.plot(
+            ("pop",(0,10e9)), ("nr",(0,2e12)), ("io",(0,4e12)), ("f",(0,6e12)),
+            ("ppolx",(0,40)), title="State Of The World", pause=2)
+    plt.show()   # keep the window open after the last iteration
+
 
 # Plot population and life expectancy against empirical data
 def demography(scenario):
