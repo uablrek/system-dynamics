@@ -1,4 +1,5 @@
 #! /usr/bin/python
+# SPDX-License-Identifier: Unlicense
 
 import system_dynamic as sd
 import world3_model as world3

@@ -1,5 +1,8 @@
 # World3
 
+The [World3 model](https://en.wikipedia.org/wiki/World3) and the "Limit
+to Growth" (LtG) book is well documented elsewhere.
+
 I have read about [comparison with empirical data](
 https://mahb.stanford.edu/wp-content/uploads/2021/07/yale-publication-1.pdf),
 and [recalibration of the model](
@@ -32,6 +35,7 @@ wanted to try for myself. So I tested the models referred from the
   An *excellent* implementation! Easy to run and understand. Clear classes
   and basically no dependencies. Perfect for use as a SD library
 
+
 I can't verify that the models are *really* implementing `world3`, but
 the Python models overlay the simulation plots on top of original
 scans from `LtG`, and shows an almost perfect match. That is good
@@ -43,6 +47,16 @@ modified `world3_model.py` to use it. Here is a BAU2 plot as an
 example (run with "./world3.py"):
 
 <img src="plot_bau2.svg" />
+
+
+## Animations
+
+I find it very interresting to alter parameters and run an animation
+of plots. the `bau2_animation()` function in [world3.py](world3.py)
+animates resources from 1e12 to 2e12. An interresting observation IMHO
+is that the food plot before 2030 is independent of resources (and
+hence also the population).
+
 
 
 ## Compare population and life expectancy to empirical data
@@ -65,10 +79,10 @@ and by `Covid-19`. The leap in simulation LE is a sudden change in
 
 ### Implementation
 
-Empirical data can *easily* be defined using a table constant
-(CT). Then a flow can be used for plotting. Since empirical data stops
-at the current year (2024) the remaining values becomes `None` and are
-not plotted.
+Empirical data can *easily* be defined using a table constant (CT)
+([demographics.py](demographics.py)). Then a flow can be used for
+plotting. Since empirical data stops at the current year (2024) the
+remaining values becomes `None` and are not plotted.
 
 ### Analysis
 

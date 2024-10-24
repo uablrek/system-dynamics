@@ -69,8 +69,8 @@ The `gate` can be opened or closed and create a step or a pulse in the
 flow. The `f_delayinit()` method in `NodeDelay3` takes a flow and a
 constant as input. The constant influences how long the flow is
 delayed, and make sure that it's well above the time-step (or weird
-things happen).  The pond run displays a pulse for a number different
-delay constants. Here is a simulation for constant=2:
+things happen).  The [pond model](pond.py) animates a pulse for
+different delay constants. Here is a simulation for constant=2:
 
 <img src="plot_pond_pulse.svg" />
 

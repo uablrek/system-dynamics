@@ -174,7 +174,7 @@ def load(world3, scenario=1, version=2003):
             [60, 0.0082],
             [70, 0.0023],
             [80, 0.001]),
-        detail="Mortality rate in population aged from 0 to 14 years")
+        detail="Mortality rate 0 to 14 years f(le)")
     M2 = world3.addConstant(
         "M2", CT, val=(
             [20, 0.0266],
@@ -184,25 +184,27 @@ def load(world3, scenario=1, version=2003):
             [60, 0.004],
             [70, 0.0016],
             [80, 0.0008]),
-        detail="Mortality rate in population aged from 15 to 44 years")
-    M3 = world3.addConstant("M3", CT, val=([20, 0.0562],
-                                     [30, 0.0373],
-                                     [40, 0.0252],
-                                     [50, 0.0171],
-                                     [60, 0.0118],
-                                     [70, 0.0083],
-                                     [80, 0.006]),
-                      detail="Mortality rate in population aged from 45 to 64 years",
-                      unit=None)
-    M4 = world3.addConstant("M4", CT, val=([20, 0.13],
-                                     [30, 0.11],
-                                     [40, 0.09],
-                                     [50, 0.07],
-                                     [60, 0.06],
-                                     [70, 0.05],
-                                     [80, 0.04]),
-                      detail="Mortality rate in population older than age 65",
-                      unit=None)
+        detail="Mortality rate 15 to 44 years f(le)")
+    M3 = world3.addConstant(
+        "M3", CT, val=(
+            [20, 0.0562],
+            [30, 0.0373],
+            [40, 0.0252],
+            [50, 0.0171],
+            [60, 0.0118],
+            [70, 0.0083],
+            [80, 0.006]),
+        detail="Mortality 45 to 64 years f(le)")
+    M4 = world3.addConstant(
+        "M4", CT, val=(
+            [20, 0.13],
+            [30, 0.11],
+            [40, 0.09],
+            [50, 0.07],
+            [60, 0.06],
+            [70, 0.05],
+            [80, 0.04]),
+        detail="Mortality older than age 65 f(le)")
 
     pop = world3.addFlow("pop", detail="Total Population", unit="capita")
 
@@ -227,24 +229,31 @@ def load(world3, scenario=1, version=2003):
 
     # Related to death
     LEN = world3.addConstant("LEN", C, val=28)
-    HSID = world3.addConstant("HSID", C, val=20)
+    HSID = world3.addConstant(
+        "HSID", C, val=20, detail="Health Services Impact Delay")
     EHSPCI = world3.addConstant("EHSPCI", C, val=0)
 
-    # LMF values depend on the version used
+    # Lifetime Multiplier from Food f(fpc/sfpc)
     if version == 1972:
-        LMF = world3.addConstant("LMF", CT, val=([0, 0],
-                                           [1, 1],
-                                           [2, 1.2],
-                                           [3, 1.3],
-                                           [4, 1.35],
-                                           [5, 1.4]))
+        LMF = world3.addConstant(
+            "LMF", CT, val=(
+                [0, 0],
+                [1, 1],
+                [2, 1.2],
+                [3, 1.3],
+                [4, 1.35],
+                [5, 1.4]),
+            detail="Lifetime Multiplier from Food f(fpc/sfpc)")
     if version == 2003:
-        LMF = world3.addConstant("LMF", CT, val=([0, 0],
-                                           [1, 1],
-                                           [2, 1.43],
-                                           [3, 1.5],
-                                           [4, 1.5],
-                                           [5, 1.5]))
+        LMF = world3.addConstant(
+            "LMF", CT, val=(
+                [0, 0],
+                [1, 1],
+                [2, 1.43],
+                [3, 1.5],
+                [4, 1.5],
+                [5, 1.5]),
+            detail="Lifetime Multiplier from Food f(fpc/sfpc)")
 
     HSAPC = world3.addConstant("HSAPC", CT, val=([0, 0],
                                            [250, 20],
@@ -255,28 +264,37 @@ def load(world3, scenario=1, version=2003):
                                            [1500, 200],
                                            [1750, 220],
                                            [2000, 230]))
-    LMHS1 = world3.addConstant("LMHS1", CT, val=([0, 1],
-                                           [20, 1.1],
-                                           [40, 1.4],
-                                           [60, 1.6],
-                                           [80, 1.7],
-                                           [100, 1.8]))
+    # LMHS2 before 1940
+    LMHS1 = world3.addConstant(
+        "LMHS1", CT, val=(
+            [0, 1],
+            [20, 1.1],
+            [40, 1.4],
+            [60, 1.6],
+            [80, 1.7],
+            [100, 1.8]),
+        detail="Lifetime Multiplier from Health Services f(ehspc/gdpu)")
 
-    # LMHS2 values depend on the version used
+    # LMHS2 after 1940
     if version == 1972:
-        LMHS2 = world3.addConstant("LMHS2", CT, val=([0, 1],
-                                               [20, 1.4],
-                                               [40, 1.6],
-                                               [60, 1.8],
-                                               [80, 1.95],
-                                               [100, 2]))
+        LMHS2 = world3.addConstant(
+            "LMHS2", CT, val=(
+                [0, 1],
+                [20, 1.4],
+                [40, 1.6],
+                [60, 1.8],
+                [80, 1.95],
+                [100, 2]),
+            detail="Lifetime Multiplier from Health Services f(ehspc/gdpu)")
     if version == 2003:
-        LMHS2 = world3.addConstant("LMHS2", CT, val=([0, 1],
-                                               [20, 1.5],
-                                               [40, 1.9],
-                                               [60, 2],
-                                               [80, 2],
-                                               [100, 2]))
+        LMHS2 = world3.addConstant(
+            "LMHS2", CT, val=(
+                [0, 1],
+                [20, 1.5],
+                [40, 1.9],
+                [60, 2],
+                [80, 2],
+                [100, 2]))
 
     FPU = world3.addConstant("FPU", CT, val=([0, 0],
                                        [2e9, 0.2],
@@ -309,18 +327,22 @@ def load(world3, scenario=1, version=2003):
                                        [100, 0.2]))
 
     lmf = world3.addFlow("lmf")
-    hsapc = world3.addFlow("hsapc")
+    hsapc = world3.addFlow(
+        "hsapc", detail="Health Services Allocations Per Capita")
     lmhs1 = world3.addFlow("lmhs1")
     lmhs2 = world3.addFlow("lmhs2")
     fpu = world3.addFlow("fpu")
     cmi = world3.addFlow("cmi")
     lmp = world3.addFlow("lmp")
 
-    d = world3.addFlow("d")
-    cdr = world3.addFlow("cdr")
-    lmhs = world3.addFlow("lmhs")
-    ehspc = world3.addStock("ehspc", val=EHSPCI.val)
-    lmc = world3.addFlow("lmc")
+    d = world3.addFlow("d", detail="Deaths per year", unit="capita")
+    cdr = world3.addFlow("cdr", detail="Crude Death Rate")
+    lmhs = world3.addFlow(
+        "lmhs", detail="Lifetime Multiplier from Health Services")
+    ehspc = world3.addStock(
+        "ehspc", val=EHSPCI.val, detail="Effective Health Services Per Capita")
+    lmc = world3.addFlow(
+        "lmc", detail="Lifetime Multiplier from Crowding")
     le = world3.addFlow("le", detail="Life Expectancy", unit="years")
 
     # Related to birth
