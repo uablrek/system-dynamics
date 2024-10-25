@@ -70,9 +70,23 @@ flow. The `f_delayinit()` method in `NodeDelay3` takes a flow and a
 constant as input. The constant influences how long the flow is
 delayed, and make sure that it's well above the time-step (or weird
 things happen).  The [pond model](pond.py) animates a pulse for
-different delay constants. Here is a simulation for constant=2:
+different delays.
 
 <img src="plot_pond_pulse.svg" />
+
+## Animation
+
+I couldn't find a way to generate an animated svg directly by
+`matplotlib.pyplot`, but it can generate an svg for each iteration
+which can be combined using [svgasm](https://github.com/tomkwok/svgasm/).
+To create the animation above, uncomment the `plt.savefig()` call and do:
+
+```
+./pond.py
+./admin.sh animate --out=testplot.svg pond-*.svg
+```
+
+(`svgasm` can optimize svg files, but I didn't get that working)
 
 
 ## JSON and post-processing

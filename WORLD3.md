@@ -57,6 +57,8 @@ animates resources from 1e12 to 2e12. An interresting observation IMHO
 is that the food plot before 2030 is independent of resources (and
 hence also the population).
 
+<img src="bau2_nranimation.svg" />
+
 
 
 ## Compare population and life expectancy to empirical data

@@ -38,6 +38,7 @@ def bau2_animation():
         s.plot(
             ("pop",(0,10e9)), ("nr",(0,2e12)), ("io",(0,4e12)), ("f",(0,6e12)),
             ("ppolx",(0,40)), title="State Of The World", pause=2)
+        #plt.savefig(f"bau2-{r}.svg", format="svg", transparent=True)
     plt.show()   # keep the window open after the last iteration
 
 
