@@ -103,3 +103,65 @@ IMHO these are serious differences, and not well addressed in the
 https://onlinelibrary.wiley.com/doi/full/10.1111/jiec.13442).
 I will try to tune the model in this area.
 
+## Population system
+
+The population system seprarated looks like this (open the svg image
+(raw) in a separate tab to see the tooltip's):
+
+<img src="pop-system.svg" />
+
+The main input variables are: Life expectancy in years (le), and
+Births in children/year (b). The mortality rates for different ages
+are computed from `le` with constant tables (CT), example:
+
+```python
+    M1 = s.addConstant(
+        "M1", sd.CT, val=(
+            [20, 0.0567],
+            [30, 0.0366],
+            [40, 0.0243],
+            [50, 0.0155],
+            [60, 0.0082],
+            [70, 0.0023],
+            [80, 0.001]),
+        detail="Mortality rate 0-14 years", unit="f(le)")
+```
+
+For instance for le=50, the mortality rate is 0.0155 in the 0-14 year
+group. These rates must be computed carefully in a way I could
+maybe figure out in 1990 when I studied math, but not any more
+(I am sad to say). But...
+
+This can be tested in the model ([le.py](le.py)). The idea is to set
+fixed values for Births and Life expectancy, and run the population
+system model until the poulation becomes stable. For 1000 births/year
+and le=70, the total population should stabilize at 70000 people.
+
+<img src="pop-system-plot-70.svg" />
+
+However, it stabilizes at ~74000. Here is a plot that shows simulated
+`le` compared to expected (dashed):
+
+<img src="le-plot.svg" />
+
+It differs quite much around 70-80y. Since the last value is 80 in the
+model, the simulated `le` levels out.
+
+Possible causes:
+
+1. My reasoning is incorrect
+2. The implementation of `world3` is incorrect
+3. The `world3` model it incorrect
+
+I will assume `3.` (feel free to open an issue to correct me there),
+and that the rates should be tuned. By tuning the mortality rates we
+can get a better match, but it doesn't seem to make any difference in
+`world3`. After calling `modify_M()`:
+
+<img src="le-plot-2.svg" />
+
+
+
+
+
+

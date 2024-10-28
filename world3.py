@@ -4,6 +4,7 @@
 import system_dynamic as sd
 import world3_model as world3
 from demographics import load_wpop, load_wle
+from le import modify_M
 import numpy
 import matplotlib.pyplot as plt
 
@@ -19,6 +20,7 @@ def scenario(scenario):
 def bau2():
     s = sd.System(init_time=1900, end_time=2100, time_step=0.5)
     world3.load(s, scenario=2)
+    #modify_M(s)  # (makes no difference)
     s.run()
     s.plot(
         ("pop",(0,10e9)), ("nr",(0,2e12)), ("io",(0,4e12)), ("f",(0,6e12)),
@@ -46,6 +48,7 @@ def bau2_animation():
 def demography(scenario):
     s = sd.System(init_time=1900, end_time=2100, time_step=0.5)
     world3.load(s, scenario=scenario)
+    modify_M(s)    # Correct Mortality rates (no visible effect)
     load_wpop(s)
     load_wle(s)
     s.run()
@@ -63,3 +66,4 @@ def model_graph():
 # Run a function
 if __name__ == "__main__":
     bau2()
+    #demography(2)

@@ -174,7 +174,7 @@ def load(world3, scenario=1, version=2003):
             [60, 0.0082],
             [70, 0.0023],
             [80, 0.001]),
-        detail="Mortality rate 0 to 14 years f(le)")
+        detail="Mortality rate 0-14 years", unit="f(le)")
     M2 = world3.addConstant(
         "M2", CT, val=(
             [20, 0.0266],
@@ -184,7 +184,7 @@ def load(world3, scenario=1, version=2003):
             [60, 0.004],
             [70, 0.0016],
             [80, 0.0008]),
-        detail="Mortality rate 15 to 44 years f(le)")
+        detail="Mortality rate 15-44 years", unit="f(le)")
     M3 = world3.addConstant(
         "M3", CT, val=(
             [20, 0.0562],
@@ -194,7 +194,7 @@ def load(world3, scenario=1, version=2003):
             [60, 0.0118],
             [70, 0.0083],
             [80, 0.006]),
-        detail="Mortality 45 to 64 years f(le)")
+        detail="Mortality 45-64 years", unit="f(le)")
     M4 = world3.addConstant(
         "M4", CT, val=(
             [20, 0.13],
@@ -204,28 +204,33 @@ def load(world3, scenario=1, version=2003):
             [60, 0.06],
             [70, 0.05],
             [80, 0.04]),
-        detail="Mortality older than age 65 f(le)")
+        detail="Mortality older than age 65", unit="f(le)")
 
-    pop = world3.addFlow("pop", detail="Total Population", unit="capita")
+    pop = world3.addFlow(
+        "pop", detail="Total Population", unit="capita")
 
-    p1 = world3.addStock("p1", val=P1I.val)
-    p2 = world3.addStock("p2", val=P2I.val)
-    p3 = world3.addStock("p3", val=P3I.val)
-    p4 = world3.addStock("p4", val=P4I.val)
+    p1 = world3.addStock(
+        "p1", val=P1I.val, detail="0 to 14 years", unit="capita")
+    p2 = world3.addStock(
+        "p2", val=P2I.val, detail="15 to 44 years", unit="capita")
+    p3 = world3.addStock(
+        "p3", val=P3I.val, detail="45 to 64 years", unit="capita")
+    p4 = world3.addStock(
+        "p4", val=P4I.val, detail="older than age 65", unit="capita")
 
-    m1 = world3.addFlow("m1")
-    m2 = world3.addFlow("m2")
-    m3 = world3.addFlow("m3")
-    m4 = world3.addFlow("m4")
+    m1 = world3.addFlow("m1", detail="Mortality 0-14", unit="rate")
+    m2 = world3.addFlow("m2", detail="Mortality 15-44", unit="rate")
+    m3 = world3.addFlow("m3", detail="Mortality 45-64", unit="rate")
+    m4 = world3.addFlow("m4", detail="Mortality 65-", unit="rate")
 
-    d1 = world3.addFlow("d1")
-    d2 = world3.addFlow("d2")
-    d3 = world3.addFlow("d3")
-    d4 = world3.addFlow("d4")
+    d1 = world3.addFlow("d1", detail="Deaths 0-14", unit="capita/year")
+    d2 = world3.addFlow("d2", detail="Deaths 15-44", unit="capita/year")
+    d3 = world3.addFlow("d3", detail="Deaths 45-64", unit="capita/year")
+    d4 = world3.addFlow("d4", detail="Deaths 65-", unit="capita/year")
 
-    mat1 = world3.addFlow("mat1")
-    mat2 = world3.addFlow("mat2")
-    mat3 = world3.addFlow("mat3")
+    mat1 = world3.addFlow("mat1", detail="Maturation 14 years", unit="rate")
+    mat2 = world3.addFlow("mat2", detail="Maturation 44 years", unit="rate")
+    mat3 = world3.addFlow("mat3", detail="Maturation 64 years", unit="rate")
 
     # Related to death
     LEN = world3.addConstant("LEN", C, val=28)
@@ -346,15 +351,22 @@ def load(world3, scenario=1, version=2003):
     le = world3.addFlow("le", detail="Life Expectancy", unit="years")
 
     # Related to birth
-    RLT = world3.addConstant("RLT", C, val=30)
-    PET = world3.addConstant("PET", C, val=4000)
-    MTFN = world3.addConstant("MTFN", C, val=12)
-    LPD = world3.addConstant("LPD", C, val=20)
-    AIOPCI = world3.addConstant("AIOPCI", C, val=43.3)
+    RLT = world3.addConstant(
+        "RLT", C, val=30, detail="Reproduction Lifetime", unit="years")
+    PET = world3.addConstant(
+        "PET", C, val=NEVER, detail="Population Equilibrium Time", unit="year")
+    MTFN = world3.addConstant(
+        "MTFN", C, val=12, detail="Maximum Total Fertility Normal", unit='?')
+    LPD = world3.addConstant(
+        "LPD", C, val=20, detail="Lifetime Perception Delay", unit='?')
+    AIOPCI = world3.addConstant(
+        "AIOPCI", C, val=43.3, detail="Initial Average Industrial Output Per Capita")
 
     # ZPGT values depend on scenario chosen
     # mise en place de la politique de conrôle de naissance à 2 enfants par femme
-    ZPGT = world3.addConstant("ZPGT", C, val=scene.zero_pop_growth_year)
+    ZPGT = world3.addConstant(
+        "ZPGT", C, val=scene.zero_pop_growth_year,
+        detail="Zero Population Growth Time", unit="year")
 
     # DCFSN values depend on the version used
     if version == 1972:
