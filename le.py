@@ -4,6 +4,7 @@
 import system_dynamic as sd
 from system_dynamic import C, CT
 import matplotlib.pyplot as plt
+import json
 
 def load_pop(world3):
     s = world3
@@ -166,11 +167,18 @@ def modify_M(s):
         [70, 0.052],
         [80, 0.042])
 
+# Read Mx constants from a json file
+def read_M(s, file="data/M.json"):
+    with open(file) as fd:
+        d = json.load(fd)
+    s.update(d)
+
 def simple_plot(s):
     s.run()
     pop = s.nodes["pop"]
     print(f"Final {pop.hist[-1]}")
     s.plot("pop")
+    #print(json.dumps(s.dict_nodes('M1', 'M2', 'M3', 'M4')))
 
 
 def plot_xxy(x, y):
@@ -197,7 +205,8 @@ def le_test(s):
 if __name__ == "__main__":
     s = sd.System(init_time=0, end_time=300, time_step=1)
     load_pop(s)
-    modify_M(s)
-    s.graphviz(title="Population")
+    #modify_M(s)
+    read_M(s, file="data/M.json")
+    #s.graphviz(title="Population")
     #simple_plot(s)
-    #le_test(s)
+    le_test(s)

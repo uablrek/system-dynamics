@@ -1,0 +1,153 @@
+{
+  "time_unit": "Year",
+  "nodes": [
+    {
+      "name": "M1",
+      "cat": "population",
+      "detail": "Mortality rate 0-14 years",
+      "unit": "f(le)",
+      "type": "TABLE OF CONSTANTS",
+      "val": [
+        [
+          20,
+          0.0567
+        ],
+        [
+          30,
+          0.0366
+        ],
+        [
+          40,
+          0.0241
+        ],
+        [
+          50,
+          0.0155
+        ],
+        [
+          60,
+          0.0084
+        ],
+        [
+          70,
+          0.0034
+        ],
+        [
+          80,
+          0.0013
+        ]
+      ]
+    },
+    {
+      "name": "M2",
+      "cat": "population",
+      "detail": "Mortality rate 15-44 years",
+      "unit": "f(le)",
+      "type": "TABLE OF CONSTANTS",
+      "val": [
+        [
+          20,
+          0.0266
+        ],
+        [
+          30,
+          0.0171
+        ],
+        [
+          40,
+          0.01
+        ],
+        [
+          50,
+          0.0065
+        ],
+        [
+          60,
+          0.0042
+        ],
+        [
+          70,
+          0.0025
+        ],
+        [
+          80,
+          0.0011
+        ]
+      ]
+    },
+    {
+      "name": "M3",
+      "cat": "population",
+      "detail": "Mortality 45-64 years",
+      "unit": "f(le)",
+      "type": "TABLE OF CONSTANTS",
+      "val": [
+        [
+          20,
+          0.0562
+        ],
+        [
+          30,
+          0.0373
+        ],
+        [
+          40,
+          0.0252
+        ],
+        [
+          50,
+          0.0171
+        ],
+        [
+          60,
+          0.0119
+        ],
+        [
+          70,
+          0.0086
+        ],
+        [
+          80,
+          0.0061
+        ]
+      ]
+    },
+    {
+      "name": "M4",
+      "cat": "population",
+      "detail": "Mortality older than age 65",
+      "unit": "f(le)",
+      "type": "TABLE OF CONSTANTS",
+      "val": [
+        [
+          20,
+          0.13
+        ],
+        [
+          30,
+          0.11
+        ],
+        [
+          40,
+          0.09
+        ],
+        [
+          50,
+          0.07
+        ],
+        [
+          60,
+          0.06
+        ],
+        [
+          70,
+          0.052
+        ],
+        [
+          80,
+          0.042
+        ]
+      ]
+    }
+  ]
+}

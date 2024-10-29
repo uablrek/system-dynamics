@@ -46,7 +46,7 @@ and modified `system_dynamic.py` to be a generic SD library, and
 modified `world3_model.py` to use it. Here is a BAU2 plot as an
 example (run with "./world3.py"):
 
-<img src="plot_bau2.svg" />
+<img src="figures/plot_bau2.svg" />
 
 
 ## Animations
@@ -57,13 +57,13 @@ animates resources from 1e12 to 2e12. An interresting observation IMHO
 is that the food plot before 2030 is independent of resources (and
 hence also the population).
 
-<img src="bau2_nranimation.svg" />
+<img src="figures/bau2_nranimation.svg" />
 
 
 
 ## Compare population and life expectancy to empirical data
 
-<img src="plot_pop1.svg" />
+<img src="figures/plot_pop1.svg" />
 
 This compares to the BAU2 estimates to empirical demographical
 data. It was surprisingly hard to get consistent data, especially
@@ -108,7 +108,7 @@ I will try to tune the model in this area.
 The population system seprarated looks like this (open the svg image
 (raw) in a separate tab to see the tooltip's):
 
-<img src="pop-system.svg" />
+<img src="figures/pop-system.svg" />
 
 The main input variables are: Life expectancy in years (le), and
 Births in children/year (b). The mortality rates for different ages
@@ -137,12 +137,12 @@ fixed values for Births and Life expectancy, and run the population
 system model until the poulation becomes stable. For 1000 births/year
 and le=70, the total population should stabilize at 70000 people.
 
-<img src="pop-system-plot-70.svg" />
+<img src="figures/pop-system-plot-70.svg" />
 
 However, it stabilizes at ~74000. Here is a plot that shows simulated
 `le` compared to expected (dashed):
 
-<img src="le-plot.svg" />
+<img src="figures/le-plot.svg" />
 
 It differs quite much around 70-80y. Since the last value is 80 in the
 model, the simulated `le` levels out.
@@ -156,12 +156,9 @@ Possible causes:
 I will assume `3.` (feel free to open an issue to correct me there),
 and that the rates should be tuned. By tuning the mortality rates we
 can get a better match, but it doesn't seem to make any difference in
-`world3`. After calling `modify_M()`:
+`world3`. After calling `read_M()`:
 
-<img src="le-plot-2.svg" />
+<img src="figures/le-plot-2.svg" />
 
-
-
-
-
-
+The updated mortality rates are read from [data/M.json](data/M.json).
+You can modify it to test other values.

@@ -593,7 +593,7 @@ class System:
                 case 'stock':
                     node.val = node.hist[0] = n['val']
                 case str(CT):
-                    pass
+                    node.val = n['val']
                 case str(C):
                     node.val = n['val']
 

@@ -18,7 +18,7 @@ model graphs are added. The model graphs are generated with
 
 ## The grass+sheep model
 
-<img src="grass+sheep.svg" />
+<img src="figures/grass+sheep.svg" />
 
 Items have "tooltips" with information that should popup when you
 hoover over the item. I must right-click on the graph and "Open Image
@@ -47,7 +47,7 @@ Run it (on Linux):
 ```
 You should see something like:
 
-<img src="plot_grass+sheep.svg" />
+<img src="figures/plot_grass+sheep.svg" />
 
 I was a bit surprised by the oscillations since that requires a
 delay. But the delay is "built-in". For instance `starvation` is
@@ -63,7 +63,7 @@ is just the code expressed with math symbols. To investigate this, the
 stream and the flow is controlled by a gate. The stream is supposed to
 have some length and is modelled with a delay.
 
-<img src="pond.svg" />
+<img src="figures/pond.svg" />
 
 The `gate` can be opened or closed and create a step or a pulse in the
 flow. The `f_delayinit()` method in `NodeDelay3` takes a flow and a
@@ -72,7 +72,7 @@ delayed, and make sure that it's well above the time-step (or weird
 things happen).  The [pond model](pond.py) animates a pulse for
 different delays.
 
-<img src="plot_pond_pulse.svg" />
+<img src="figures/plot_pond_pulse.svg" />
 
 ## Animation
 
