@@ -64,9 +64,14 @@ eset() {
 ##     Create an animated SVG from files. Requires "svgasm" (in $GITHUBD)
 ##     from: https://github.com/tomkwok/svgasm/
 cmd_animate() {
-	eset __out=- __delay=2 "__cleaner='cat %s'"
+	local cleaner='cat %s'
+	if which svgo > /dev/null 2>&1; then
+		cleaner='svgo --multipass -o - -i %s'
+		log "Cleaner [$cleaner]"
+	fi
+	eset __out=- __delay=2
 	test -x $svgasm || die "Not executable [$svgasm]"
-	$svgasm -d $__delay -o $__out -c "$__cleaner" $@
+	$svgasm -d $__delay -o $__out -c "$cleaner" $@
 }
 
 

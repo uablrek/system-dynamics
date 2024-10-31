@@ -86,7 +86,8 @@ To create the animation above, uncomment the `plt.savefig()` call and do:
 ./admin.sh animate --out=testplot.svg pond-*.svg
 ```
 
-(`svgasm` can optimize svg files, but I didn't get that working)
+Svg files are optimized with [svgo](https://github.com/svg/svgo)
+if it's available.
 
 
 ## JSON and post-processing
