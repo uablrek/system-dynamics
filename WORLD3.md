@@ -51,11 +51,9 @@ example (run with "./world3.py"):
 
 ## Animations
 
-I find it very interresting to alter parameters and run an animation
-of plots. the `bau2_animation()` function in [world3.py](world3.py)
-animates resources from 1e12 to 2e12. An interresting observation IMHO
-is that the food plot before 2030 is independent of resources (and
-hence also the population).
+I find it interresting to alter parameters and run an animation of
+plots. the `bau2_animation()` function in [world3.py](world3.py)
+animates resources from 1T to 2T.
 
 <img src="figures/bau2_nranimation.svg" />
 
