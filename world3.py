@@ -7,13 +7,17 @@ from demographics import load_wpop, load_wle
 from le import modify_M, read_M
 import numpy
 import matplotlib.pyplot as plt
+import world3_modifications as w3mod
 
 # Load the world3 model
 def load(scenario):
     s = sd.System(init_time=1900, end_time=2100, time_step=0.5)
     world3.load(s, scenario=scenario)
     # (tweaks goes here...)
-    #read_M(s)
+    read_M(s)
+    #w3mod.remove_unit_constants(s)
+    w3mod.adjust_le(s)
+    #modify_M(s)
     return s
 
 # Run a scenario and plot data with scales similar to LtG

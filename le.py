@@ -128,7 +128,7 @@ def load_pop(world3):
     s.add_equation(nodes_mltpld, d4, [p4, m4])
     s.add_equation(sd.f_tab, m4, [M4, le])
 
-# Modify Mortality rates
+# Modify Mortality rates (experimental)
 def modify_M(s):
     M1 = s.nodes['M1']
     M2 = s.nodes['M2']
@@ -141,7 +141,8 @@ def modify_M(s):
         [50, 0.0155],
         [60, 0.0084],
         [70, 0.0034],
-        [80, 0.0013])
+        [80, 0.0013],
+        [90, 0.0010])
     M2.val=(
         [20, 0.0266],
         [30, 0.0171],
@@ -149,7 +150,8 @@ def modify_M(s):
         [50, 0.0065],
         [60, 0.0042],
         [70, 0.0025],
-        [80, 0.0011])
+        [80, 0.0025],
+        [90, 0.0034])
     M3.val=(
         [20, 0.0562],
         [30, 0.0373],
@@ -157,7 +159,8 @@ def modify_M(s):
         [50, 0.0171],
         [60, 0.0119],
         [70, 0.0086],
-        [80, 0.0061])
+        [80, 0.0055],
+        [90, 0.0040])
     M4.val=(
         [20, 0.13],
         [30, 0.11],
@@ -165,7 +168,8 @@ def modify_M(s):
         [50, 0.07],
         [60, 0.06],
         [70, 0.052],
-        [80, 0.042])
+        [80, 0.038],
+        [90, 0.026])
 
 # Read Mx constants from a json file
 def read_M(s, file="data/M.json"):
@@ -180,6 +184,31 @@ def simple_plot(s):
     s.plot("pop")
     #print(json.dumps(s.dict_nodes('M1', 'M2', 'M3', 'M4')))
 
+def plot_age(s):
+    x = [0, 14.99, 15, 44.99, 45, 64.99, 65, 90]
+    LE = s.nodes["LE"]
+    for le in range(30, 95, 5):
+        LE.val = le
+        s.reset()
+        s.run()
+        p1 = s.nodes['p1']
+        p2 = s.nodes['p2']
+        p3 = s.nodes['p3']
+        p4 = s.nodes['p4']
+        pop = s.nodes['pop']
+        v1 = p1.val/pop.val/15
+        v2 = p2.val/pop.val/30
+        v3 = p3.val/pop.val/20
+        v4 = p4.val/pop.val/25
+        y = [v1,v1,v2,v2,v3,v3,v4,v4]
+        fig = plt.gcf()
+        fig.clear()
+        fig.suptitle(f"le={le}")
+        ax = plt.axes()
+        ax.set_ylim(0,0.025)
+        ax.plot(x, y)
+        plt.pause(3)
+    plt.show()
 
 def plot_xxy(x, y):
     ax = plt.axes()
@@ -191,7 +220,7 @@ def plot_xxy(x, y):
 def le_test(s):
     LE = s.nodes["LE"]
     pop = s.nodes["pop"]
-    x = range(28, 90, 2)
+    x = range(28, 95, 2)
     y = []
     for le in x:
         LE.val = le
@@ -205,8 +234,9 @@ def le_test(s):
 if __name__ == "__main__":
     s = sd.System(init_time=0, end_time=300, time_step=1)
     load_pop(s)
-    #modify_M(s)
-    read_M(s, file="data/M.json")
+    modify_M(s)
+    #read_M(s, file="data/M.json")
     #s.graphviz(title="Population")
     #simple_plot(s)
     le_test(s)
+    #plot_age(s)

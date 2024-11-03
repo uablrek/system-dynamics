@@ -153,10 +153,27 @@ Possible causes:
 
 I will assume `3.` (feel free to open an issue to correct me there),
 and that the rates should be tuned. By tuning the mortality rates we
-can get a better match, but it doesn't seem to make any difference in
+can get a better match, but it doesn't seem to make much difference in
 `world3`. After calling `read_M()`:
 
 <img src="figures/le-plot-2.svg" />
 
 The updated mortality rates are read from [data/M.json](data/M.json).
 You can modify it to test other values.
+
+
+### Adjusted LE in population dynamics
+
+By adjusting the `le` used in population dynamics by a factor 1.06 we
+get a very good fit with empirical data.
+
+<img src="figures/plot_pop2.svg" />
+
+Even the simulation `le` gets a better fit. This is how the adjustment
+affects BAU2
+
+<img src="figures/bau2_pop2.svg" />
+
+Beside a better conformance with population data, the industrial
+output peaks at a lower level.  The peak is around 2040. But remember,
+the `world3` doesn't model political conflicts like wars.

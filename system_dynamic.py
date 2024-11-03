@@ -43,7 +43,7 @@
 # - Rename class World3->System and simplify
 # - Plot and graph functions
 # - Boundaries (max, min) in stocks
-# - A "sign" used to set +,- on edges (and more)
+# - A "sign" used to set +,- on edges (and more) (issue #1)
 # - Primitive trace
 # - An automatic 'time' stock
 # - Attempt to follow Python style (https://peps.python.org/pep-0008/)
@@ -51,6 +51,7 @@
 # ...and more
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import EngFormatter
 
 C = "CONSTANT"
 CT = "TABLE OF CONSTANTS"
@@ -404,8 +405,10 @@ class System:
         self.nodesrank += self.stocks
 
     # Plot node histories against time (x-axis)
-    def plot_nodes(self, nodes, title=None, size=(10,5), pause=0):
+    def plot_nodes(
+            self, nodes, title=None, size=(10,5), pause=0, formatter=None):
         # https://matplotlib.org/stable/gallery/spines/multiple_yaxis_with_spines.html
+        # https://matplotlib.org/stable/gallery/text_labels_and_annotations/engineering_formatter.html
         if not nodes:
             return
         fig = plt.gcf()         # (Get Current Figure)
@@ -416,11 +419,17 @@ class System:
         ax = plt.axes()
         ax.set(xlabel=self.time_unit)
         ax.grid(axis='x', linestyle=':')
+        y_offset = 50   # Offet additional Y-axis outward
+        if formatter == "eng":
+            engfmt = EngFormatter(places=1, sep="\N{THIN SPACE}")
+            y_offset = 65
         s = nodes[0]
         if type(s) is tuple:
             s, lim = s
             ax.set_ylim(lim)
         ax.set(ylabel=f'{s.detail} ({s.unit})')
+        if formatter == "eng": ax.yaxis.set_major_formatter(engfmt)
+        #ax.tick_params(axis='y', rotation=90)
         i = 0
         times = self.nodes['time'].hist
         # The "C0" color used here allows 10 schemes by default
@@ -434,8 +443,10 @@ class System:
                 s, lim = s
                 t.set_ylim(lim)
             t.set(ylabel=f'{s.detail} ({s.unit})')
+            if formatter == "eng": t.yaxis.set_major_formatter(engfmt)
+            #t.tick_params(axis='y', rotation=90)
             if i > 1:
-                t.spines['right'].set_position(("outward", 50 * (i-1)))
+                t.spines['right'].set_position(("outward", y_offset * (i-1)))
                 # (this may make y-axes to overlap, which look ugly)
             p, = t.plot(times, s.hist, f'C{i}')
             t.yaxis.label.set_color(p.get_color())
@@ -451,7 +462,8 @@ class System:
             list(filter(lambda s: s.cat not in exclude, self.stocks)),
             title=title, size=size)
     # plot Plot named nodes
-    def plot(self, *nodenames, title=None, size=(10,5), pause=0):
+    def plot(
+            self, *nodenames, title=None, size=(10,5), pause=0, formatter=None):
         """Plot named nodes.
 
         Parameters
@@ -475,7 +487,8 @@ class System:
                 l.append((self.nodes[x], lim))
             else:
                 l.append(self.nodes[x])
-        self.plot_nodes(l, title=title, size=size, pause=pause)
+        self.plot_nodes(
+            l, title=title, size=size, pause=pause, formatter=formatter)
 
     # Generate model graph
     def emit_node(self, n):
@@ -603,6 +616,9 @@ def f_sum(*l):
     return sum([float(i) for i in l])
 def f_mul(val, rate):
     return val * rate
+def f_clip(c1, c2, ts, t):
+    if t <= ts : return c1
+    else : return c2
 # Interpolate a value from a "TABLE OF CONSTANTS" (CT)
 def f_tab(tab, x):
     if x < tab[0][0]:       # lower than first

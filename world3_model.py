@@ -1,4 +1,4 @@
-########################################################################################################################
+#############################################################################
 # © Copyright French Civil Aviation Authority
 # Author: Julien LEGAVRE (2022)
 
@@ -36,9 +36,10 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the GNU General Public License version 2.0 or the CeCILL  
 # license and that you accept its terms.
-########################################################################################################################
+#############################################################################
 
-# It is recommended to read the note named "MyWorld3: Equations and Explanations" before using/modifying this code.
+# It is recommended to read the note named "MyWorld3: Equations and
+# Explanations" before using/modifying this code.
 
 import copy
 from system_dynamic import C, CT
@@ -118,7 +119,7 @@ scenario11.more_nonrenewable_resources_year = year_change
 
 scenarios = [scenario1, scenario2, scenario3, scenario4, scenario5, scenario6, scenario7, scenario8, scenario9, scenario10, scenario11]
 
-SYSTEM = 'system'
+SYSTEM = 'SYSTEM'
 AGRICULTURE = 'agriculture'
 POPULATION = 'population'
 CAPITAL = "capital"
@@ -239,37 +240,37 @@ def load(world3, scenario=1, version=2003):
     EHSPCI = world3.addConstant("EHSPCI", C, val=0)
 
     # Lifetime Multiplier from Food f(fpc/sfpc)
-    if version == 1972:
-        LMF = world3.addConstant(
-            "LMF", CT, val=(
-                [0, 0],
-                [1, 1],
-                [2, 1.2],
-                [3, 1.3],
-                [4, 1.35],
-                [5, 1.4]),
-            detail="Lifetime Multiplier from Food f(fpc/sfpc)")
+    LMF = world3.addConstant(
+        "LMF", CT, val=(
+            [0, 0],
+            [1, 1],
+            [2, 1.2],
+            [3, 1.3],
+            [4, 1.35],
+            [5, 1.4]),
+        detail="Lifetime Multiplier from Food", unit="f(fpc/sfpc)")
     if version == 2003:
-        LMF = world3.addConstant(
-            "LMF", CT, val=(
+            LMF.val=(
                 [0, 0],
                 [1, 1],
                 [2, 1.43],
                 [3, 1.5],
                 [4, 1.5],
-                [5, 1.5]),
-            detail="Lifetime Multiplier from Food f(fpc/sfpc)")
+                [5, 1.5])
 
-    HSAPC = world3.addConstant("HSAPC", CT, val=([0, 0],
-                                           [250, 20],
-                                           [500, 50],
-                                           [750, 95],
-                                           [1000, 140],
-                                           [1250, 175],
-                                           [1500, 200],
-                                           [1750, 220],
-                                           [2000, 230]))
-    # LMHS2 before 1940
+    HSAPC = world3.addConstant(
+        "HSAPC", CT, val=(
+            [0, 0],
+            [250, 20],
+            [500, 50],
+            [750, 95],
+            [1000, 140],
+            [1250, 175],
+            [1500, 200],
+            [1750, 220],
+            [2000, 230]),
+        detail="Health Services Allocations Per Capita", unit="f(sopc)")
+    # LMHS before 1940
     LMHS1 = world3.addConstant(
         "LMHS1", CT, val=(
             [0, 1],
@@ -278,67 +279,78 @@ def load(world3, scenario=1, version=2003):
             [60, 1.6],
             [80, 1.7],
             [100, 1.8]),
-        detail="Lifetime Multiplier from Health Services f(ehspc/gdpu)")
+        detail="Lifetime Multiplier from Health Services",
+        unit="f(ehspc)")
 
-    # LMHS2 after 1940
-    if version == 1972:
-        LMHS2 = world3.addConstant(
-            "LMHS2", CT, val=(
-                [0, 1],
-                [20, 1.4],
-                [40, 1.6],
-                [60, 1.8],
-                [80, 1.95],
-                [100, 2]),
-            detail="Lifetime Multiplier from Health Services f(ehspc/gdpu)")
+    # LMHS after 1940
+    LMHS2 = world3.addConstant(
+        "LMHS2", CT, val=(
+            [0, 1],
+            [20, 1.4],
+            [40, 1.6],
+            [60, 1.8],
+            [80, 1.95],
+            [100, 2]),
+        detail="Lifetime Multiplier from Health Services",
+        unit="f(ehspc/gdpu)")
     if version == 2003:
-        LMHS2 = world3.addConstant(
-            "LMHS2", CT, val=(
-                [0, 1],
-                [20, 1.5],
-                [40, 1.9],
-                [60, 2],
-                [80, 2],
-                [100, 2]))
+        LMHS2.val = (
+            [0, 1],
+            [20, 1.5],
+            [40, 1.9],
+            [60, 2],
+            [80, 2],
+            [100, 2])
 
-    FPU = world3.addConstant("FPU", CT, val=([0, 0],
-                                       [2e9, 0.2],
-                                       [4e9, 0.4],
-                                       [6e9, 0.5],
-                                       [8e9, 0.58],
-                                       [1e10, 0.65],
-                                       [1.2e10, 0.72],
-                                       [1.4e10, 0.78],
-                                       [1.6e10, 0.8]))
-    CMI = world3.addConstant("CMI", CT, val=([0, 0.5],
-                                       [200, 0.05],
-                                       [400, -0.1],
-                                       [600, -0.08],
-                                       [800, -0.02],
-                                       [1000, 0.05],
-                                       [1200, 0.1],
-                                       [1400, 0.15],
-                                       [1600, 0.2]))
-    LMP = world3.addConstant("LMP", CT, val=([0, 1],
-                                       [10, 0.99],
-                                       [20, 0.97],
-                                       [30, 0.95],
-                                       [40, 0.9],
-                                       [50, 0.85],
-                                       [60, 0.75],
-                                       [70, 0.65],
-                                       [80, 0.55],
-                                       [90, 0.4],
-                                       [100, 0.2]))
+    FPU = world3.addConstant(
+        "FPU", CT, val=(
+            [0, 0],
+            [2e9, 0.2],
+            [4e9, 0.4],
+            [6e9, 0.5],
+            [8e9, 0.58],
+            [1e10, 0.65],
+            [1.2e10, 0.72],
+            [1.4e10, 0.78],
+            [1.6e10, 0.8]),
+        detail="Fraction of Population Urban", unit="f(pop)")
+    CMI = world3.addConstant(
+        "CMI", CT, val=(
+            [0, 0.5],
+            [200, 0.05],
+            [400, -0.1],
+            [600, -0.08],
+            [800, -0.02],
+            [1000, 0.05],
+            [1200, 0.1],
+            [1400, 0.15],
+            [1600, 0.2]),
+        detail="Crowding Multiplier from Industry", unit="f(iopc)")
+    LMP = world3.addConstant(
+        "LMP", CT, val=(
+            [0, 1],
+            [10, 0.99],
+            [20, 0.97],
+            [30, 0.95],
+            [40, 0.9],
+            [50, 0.85],
+            [60, 0.75],
+            [70, 0.65],
+            [80, 0.55],
+            [90, 0.4],
+            [100, 0.2]),
+        detail="Lifetime Multiplier from Polution", unit="f(ppolx)")
 
-    lmf = world3.addFlow("lmf")
+    lmf = world3.addFlow("lmf", detail="Lifetime Multiplier from Food")
     hsapc = world3.addFlow(
         "hsapc", detail="Health Services Allocations Per Capita")
-    lmhs1 = world3.addFlow("lmhs1")
-    lmhs2 = world3.addFlow("lmhs2")
-    fpu = world3.addFlow("fpu")
-    cmi = world3.addFlow("cmi")
-    lmp = world3.addFlow("lmp")
+    lmhs1 = world3.addFlow(
+        "lmhs1", detail="Lifetime Multiplier from Health Services <=1940")
+    lmhs2 = world3.addFlow(
+        "lmhs2", detail="Lifetime Multiplier from Health Services >1940")
+    fpu = world3.addFlow("fpu", detail="Fraction of Population Urban")
+    cmi = world3.addFlow("cmi", detail="Crowding Multiplier from Industry")
+    lmp = world3.addFlow("lmp", detail="Lifetime Multiplier from Polution")
 
     d = world3.addFlow("d", detail="Deaths per year", unit="capita")
     cdr = world3.addFlow("cdr", detail="Crude Death Rate")
@@ -360,7 +372,8 @@ def load(world3, scenario=1, version=2003):
     LPD = world3.addConstant(
         "LPD", C, val=20, detail="Lifetime Perception Delay", unit='?')
     AIOPCI = world3.addConstant(
-        "AIOPCI", C, val=43.3, detail="Initial Average Industrial Output Per Capita")
+        "AIOPCI", C, val=43.3,
+        detail="Initial Average Industrial Output Per Capita")
 
     # ZPGT values depend on scenario chosen
     # mise en place de la politique de conrôle de naissance à 2 enfants par femme
@@ -369,97 +382,121 @@ def load(world3, scenario=1, version=2003):
         detail="Zero Population Growth Time", unit="year")
 
     # DCFSN values depend on the version used
-    if version == 1972:
-        DCFSN = world3.addConstant("DCFSN", C, val=4)
+    DCFSN = world3.addConstant(
+        "DCFSN", C, val=4, detail="Desired Completed Family Size Normal")
     if version == 2003:
-        DCFSN = world3.addConstant("DCFSN", C, val=3.8)
+        DCFSN.val=3.8
 
-    SAD = world3.addConstant("SAD", C, val=20)
-    IEAT = world3.addConstant("IEAT", C, val=3)
+    SAD = world3.addConstant(
+        "SAD", C, val=20, detail="Social Adjustment Delay")
+    IEAT = world3.addConstant(
+        "IEAT", C, val=3, detail="Income Expectation Averaging Time")
 
     # FCEST values depend on scenario used
     # on fixe la fertillité à 1 en 2002 dans la cadre du contrôle des naissances
-    FCEST = world3.addConstant("FCEST", C, val=scene.fertility_control_year)
+    FCEST = world3.addConstant(
+        "FCEST", C, val=scene.fertility_control_year,
+        detail="Fertility Control Effectiveness Set Time")
 
     # FM values depend on the version used
-    if version == 1972:
-        FM = world3.addConstant(
-            "FM", CT, val=(
-                [0, 0],
-                [10, 0.2],
-                [20, 0.4],
-                [30, 0.6],
-                [40, 0.8],
-                [50, 0.9],
-                [60, 1],
-                [70, 1.05],
-                [80, 1.1]))
+    FM = world3.addConstant(
+        "FM", CT, val=(
+            [0, 0],
+            [10, 0.2],
+            [20, 0.4],
+            [30, 0.6],
+            [40, 0.8],
+            [50, 0.9],
+            [60, 1],
+            [70, 1.05],
+            [80, 1.1]),
+        detail="Fertility Multiplier")
     if version == 2003:
-        FM = world3.addConstant("FM", CT, val=([0, 0],
-                                         [10, 0.2],
-                                         [20, 0.4],
-                                         [30, 0.6],
-                                         [40, 0.7],
-                                         [50, 0.75],
-                                         [60, 0.79],
-                                         [70, 0.84],
-                                         [80, 0.87]))
+        FM.val=(
+            [0, 0],
+            [10, 0.2],
+            [20, 0.4],
+            [30, 0.6],
+            [40, 0.7],
+            [50, 0.75],
+            [60, 0.79],
+            [70, 0.84],
+            [80, 0.87])
 
-    CMPLE = world3.addConstant("CMPLE", CT, val=([0, 3],
-                                           [10, 2.1],
-                                           [20, 1.6],
-                                           [30, 1.4],
-                                           [40, 1.3],
-                                           [50, 1.2],
-                                           [60, 1.1],
-                                           [70, 1.05],
-                                           [80, 1]))
+    CMPLE = world3.addConstant(
+        "CMPLE", CT, val=(
+            [0, 3],
+            [10, 2.1],
+            [20, 1.6],
+            [30, 1.4],
+            [40, 1.3],
+            [50, 1.2],
+            [60, 1.1],
+            [70, 1.05],
+            [80, 1]),
+        detail="Compensatory Multiplier from Perceived Life Expectancy",
+        unit="f(ple)")
 
     # SFSN values depend on the version used
-    if version == 1972:
-        SFSN = world3.addConstant("SFSN", CT, val=([0, 1.25],
-                                             [200, 1],
-                                             [400, 0.9],
-                                             [600, 0.8],
-                                             [800, 0.75]))
+    SFSN = world3.addConstant(
+        "SFSN", CT, val=(
+            [0, 1.25],
+            [200, 1],
+            [400, 0.9],
+            [600, 0.8],
+            [800, 0.75]),
+        detail="Social Family Size Norm")
     if version == 2003:
-        SFSN = world3.addConstant("SFSN", CT, val=([0, 1.25],
-                                             [200, 0.94],
-                                             [400, 0.715],
-                                             [600, 0.59],
-                                             [800, 0.5]))
+        SFSN.val=(
+            [0, 1.25],
+            [200, 0.94],
+            [400, 0.715],
+            [600, 0.59],
+            [800, 0.5])
 
-    FRSN = world3.addConstant("FRSN", CT, val=([-0.2, 0.5],
-                                         [-0.1, 0.6],
-                                         [0, 0.7],
-                                         [0.1, 0.85],
-                                         [0.2, 1]))
-    FCE = world3.addConstant("FCE", CT, val=([0, 0.75],
-                                       [0.5, 0.85],
-                                       [1, 0.9],
-                                       [1.5, 0.95],
-                                       [2, 0.98],
-                                       [2.5, 0.99],
-                                       [3, 1]))
-    FSAFC = world3.addConstant("FSAFC", CT, val=([0, 0],
-                                           [2, 0.005],
-                                           [4, 0.015],
-                                           [6, 0.025],
-                                           [8, 0.03],
-                                           [10, 0.035]))
-    fm = world3.addFlow("fm")
-    fce = world3.addFlow("fce")
-    frsn = world3.addFlow("frsn")
-    sfsn = world3.addFlow("sfsn")
-    cmple = world3.addFlow("cmple")
-    fsafc = world3.addFlow("fsafc")
+    FRSN = world3.addConstant(
+        "FRSN", CT, val=(
+            [-0.2, 0.5],
+            [-0.1, 0.6],
+            [0, 0.7],
+            [0.1, 0.85],
+            [0.2, 1]),
+        detail="Family Response to Social Norm")
+    FCE = world3.addConstant(
+        "FCE", CT, val=(
+            [0, 0.75],
+            [0.5, 0.85],
+            [1, 0.9],
+            [1.5, 0.95],
+            [2, 0.98],
+            [2.5, 0.99],
+            [3, 1]),
+        detail="Fertility Control Effectiveness")
+    FSAFC = world3.addConstant(
+        "FSAFC", CT, val=(
+            [0, 0],
+            [2, 0.005],
+            [4, 0.015],
+            [6, 0.025],
+            [8, 0.03],
+            [10, 0.035]),
+        detail="Fraction of Services Allocated to Fertility Control")
+    fm = world3.addFlow("fm", detail="Fertility Multiplier")
+    fce = world3.addFlow("fce", detail="Fertility Control Effectiveness")
+    frsn = world3.addFlow("frsn", detail="Family Response to Social Norm")
+    sfsn = world3.addFlow("sfsn", detail="Social Family Size Norm")
+    cmple = world3.addFlow(
+        "cmple",detail="Compensatory Multiplier from Perceived Life Expectancy")
+    fsafc = world3.addFlow(
+        "fsafc", detail="Fraction of Services Allocated to Fertility Control")
 
-    b = world3.addFlow("b")
-    cbr = world3.addFlow("cbr")
-    tf = world3.addFlow("tf")
+    b = world3.addFlow("b", detail="Births", unit="children/year")
+    cbr = world3.addFlow("cbr", detail="Crude Birth Rate")
+    tf = world3.addFlow("tf", detail="Total Fertility")
     mtf = world3.addFlow("mtf")
     dtf = world3.addFlow("dtf")
-    ple = world3.addDelay3("ple")
+    ple = world3.addDelay3(
+        "ple", detail="Perceived Life Expectancy", unit="years")
     dcfs = world3.addFlow("dcfs")
     diopc = world3.addDelay3("diopc")
     fie = world3.addFlow("fie")
@@ -496,43 +533,51 @@ def load(world3, scenario=1, version=2003):
 
     # IOPCD values depend on scenario chosen
     # "Industrial Output Per Capita Desired"
-    IOPCD0 = 350 if scene.stable_industrial_output else 400
-    IOPCD = world3.addConstant("IOPCD", C, val=IOPCD0)
-    
+    IOPCD = world3.addConstant("IOPCD", C, val=400)
+    if scene.stable_industrial_output: IOPCD.val = 350
     # PYEAR values depend on the version used and on scenario chosen
-    if version == 1972:
-        PYEAR = world3.addConstant("PYEAR", C, val=1975)
+    PYEAR = world3.addConstant("PYEAR", C, val=1975)
     if version == 2003:
-        PYEAR = world3.addConstant("PYEAR", C, val=scene.policy_year)
+        PYEAR.val = scene.policy_year
 
-    FIOACV = world3.addConstant("FIOACV", CT, val=([0, 0.3],
-                                             [0.2, 0.32],
-                                             [0.4, 0.34],
-                                             [0.6, 0.36],
-                                             [0.8, 0.38],
-                                             [1, 0.43],
-                                             [1.2, 0.73],
-                                             [1.4, 0.77],
-                                             [1.6, 0.81],
-                                             [1.8, 0.82],
-                                             [2, 0.83]))
-    fioacv = world3.addFlow("fioacv")
+    FIOACV = world3.addConstant(
+        "FIOACV", CT, val=(
+            [0, 0.3],
+            [0.2, 0.32],
+            [0.4, 0.34],
+            [0.6, 0.36],
+            [0.8, 0.38],
+            [1, 0.43],
+            [1.2, 0.73],
+            [1.4, 0.77],
+            [1.6, 0.81],
+            [1.8, 0.82],
+            [2, 0.83]),
+        unit="f(iopc)/IOPCD")
+    fioacv = world3.addFlow(
+        "fioacv", detail="Fraction of Industrial Output Allocated to Consumption Variable")
 
-    iopc = world3.addFlow("iopc", detail="Industrial Output Per Capita", unit="unit")
+    iopc = world3.addFlow(
+        "iopc", detail="Industrial Output Per Capita", unit="unit")
     io = world3.addFlow("io", detail="Industrial Opuput", unit='?')
-    icor = world3.addFlow("icor")
+    icor = world3.addFlow("icor", detail="Industrial Capital-Output Ratio")
 
-    # ICOR2 values depend on the version used (is a NodeConstant if version is 1972)
+    # ICOR2 values depend on the version used (is a NodeConstant if
+    # version is 1972)
     if version == 2003:
         icor2 = world3.addFlow("icor2")
 
-    ic = world3.addStock("ic", val=ICI.val)
-    icdr = world3.addFlow("icdr")
-    alic = world3.addFlow("alic")
-    icir = world3.addFlow("icir")
-    fioai = world3.addFlow("fioai")
-    fioac = world3.addFlow("fioac")
-    fioacc = world3.addFlow("fioacc")
+    ic = world3.addStock("ic", val=ICI.val, detail="Industrial Capital")
+    icdr = world3.addFlow("icdr", detail="Industrial Capital Depreciation Rate")
+    alic = world3.addFlow(
+        "alic", detail="Average Lifetime of Industrial Capital")
+    icir = world3.addFlow("icir", detail="Industrial Capital Investment Rate")
+    fioai = world3.addFlow(
+        "fioai", detail="Fraction of Industrial Output Allocated to Industry")
+    fioac = world3.addFlow(
+        "fioac", detail="Fraction of Industrial Output Allocated to Consumption")
+    fioacc = world3.addFlow(
+        "fioacc", detail="Fraction of Industrial Output Allocated to Consumption Constant")
 
     # Related to services
     SCI = world3.addConstant("SCI", C, val=1.44e11)
@@ -992,113 +1037,121 @@ def load(world3, scenario=1, version=2003):
     if version == 1972:
         NRUF2 = world3.addConstant("NRUF2", C, val=1)
 
-    # FCAORTM values depend on scenario chosen : fraction of capital allocated to obtaining resources
-    FCAORTM0 = scene.more_nonrenewable_resources_year if scene.more_nonrenewable_resources else NEVER
-    FCAORTM = world3.addConstant("FCAORTM", C, val=FCAORTM0)
+    # FCAORTM values depend on scenario chosen : fraction of capital
+    # allocated to obtaining resources
+    FCAORTM = world3.addConstant("FCAORTM", C, val=NEVER)
+    if scene.more_nonrenewable_resources_year:
+        FCAORTM.val = scene.more_nonrenewable_resources_year
 
     # DNRUR values depend on the version used (not used in 1972)
     if version == 2003:
         DNRUR = world3.addConstant("DNRUR", C, val=4.8e9)
 
     # PCRUM values depend on the version used
-    if version == 1972:
-        PCRUM = world3.addConstant("PCRUM", CT, val=([0, 0],
-                                               [200, 0.85],
-                                               [400, 2.6],
-                                               [600, 4.4],
-                                               [800, 5.4],
-                                               [1000, 6.2],
-                                               [1200, 6.8],
-                                               [1400, 7],
-                                               [1600, 7]))
+    PCRUM = world3.addConstant(
+        "PCRUM", CT, val=(
+            [0, 0],
+            [200, 0.85],
+            [400, 2.6],
+            [600, 4.4],
+            [800, 5.4],
+            [1000, 6.2],
+            [1200, 6.8],
+            [1400, 7],
+            [1600, 7]))
     if version == 2003:
-        PCRUM = world3.addConstant("PCRUM", CT, val=([0, 0],
-                                               [200, 0.85],
-                                               [400, 2.6],
-                                               [600, 3.4],
-                                               [800, 3.8],
-                                               [1000, 4.1],
-                                               [1200, 4.4],
-                                               [1400, 4.7],
-                                               [1600, 5]))
+        PCRUM.val=(
+            [0, 0],
+            [200, 0.85],
+            [400, 2.6],
+            [600, 3.4],
+            [800, 3.8],
+            [1000, 4.1],
+            [1200, 4.4],
+            [1400, 4.7],
+            [1600, 5])
 
-    FCAOR1 = world3.addConstant("FCAOR1", CT, val=([0, 1],
-                                             [0.1, 0.9],
-                                             [0.2, 0.7],
-                                             [0.3, 0.5],
-                                             [0.4, 0.2],
-                                             [0.5, 0.1],
-                                             [0.6, 0.05],
-                                             [0.7, 0.05],
-                                             [0.8, 0.05],
-                                             [0.9, 0.05],
-                                             [1, 0.05]))
+    FCAOR1 = world3.addConstant(
+        "FCAOR1", CT, val=(
+            [0, 1],
+            [0.1, 0.9],
+            [0.2, 0.7],
+            [0.3, 0.5],
+            [0.4, 0.2],
+            [0.5, 0.1],
+            [0.6, 0.05],
+            [0.7, 0.05],
+            [0.8, 0.05],
+            [0.9, 0.05],
+            [1, 0.05]))
 
     # FCAOR2 values depend on the version used and on scenario chosen
-    if version == 1972:
-        FCAOR2 = world3.addConstant("FCAOR2", CT, val=([0, 1],
-                                                 [0.1, 0.9],
-                                                 [0.2, 0.7],
-                                                 [0.3, 0.5],
-                                                 [0.4, 0.2],
-                                                 [0.5, 0.1],
-                                                 [0.6, 0.05],
-                                                 [0.7, 0.05],
-                                                 [0.8, 0.05],
-                                                 [0.9, 0.05],
-                                                 [1, 0.05]))
+    FCAOR2 = world3.addConstant(
+        "FCAOR2", CT, val=(
+            [0, 1],
+            [0.1, 0.9],
+            [0.2, 0.7],
+            [0.3, 0.5],
+            [0.4, 0.2],
+            [0.5, 0.1],
+            [0.6, 0.05],
+            [0.7, 0.05],
+            [0.8, 0.05],
+            [0.9, 0.05],
+            [1, 0.05]))
     if version == 2003:
         if scene.more_nonrenewable_resources:
-            FCAOR2 = world3.addConstant("FCAOR2", CT, val=([0, 1],
-                                                     [0.1, 0.1],
-                                                     [0.2, 0.05],
-                                                     [0.3, 0.05],
-                                                     [0.4, 0.05],
-                                                     [0.5, 0.05],
-                                                     [0.6, 0.05],
-                                                     [0.7, 0.05],
-                                                     [0.8, 0.05],
-                                                     [0.9, 0.05],
-                                                     [1, 0.05]))
+            FCAOR2.val=(
+                [0, 1],
+                [0.1, 0.1],
+                [0.2, 0.05],
+                [0.3, 0.05],
+                [0.4, 0.05],
+                [0.5, 0.05],
+                [0.6, 0.05],
+                [0.7, 0.05],
+                [0.8, 0.05],
+                [0.9, 0.05],
+                [1, 0.05])
         else:
-            FCAOR2 = world3.addConstant("FCAOR2", CT, val=([0, 1],
-                                                     [0.1, 0.2],
-                                                     [0.2, 0.1],
-                                                     [0.3, 0.05],
-                                                     [0.4, 0.05],
-                                                     [0.5, 0.05],
-                                                     [0.6, 0.05],
-                                                     [0.7, 0.05],
-                                                     [0.8, 0.05],
-                                                     [0.9, 0.05],
-                                                     [1, 0.05]))
+            FCAOR2.val=(
+                [0, 1],
+                [0.1, 0.2],
+                [0.2, 0.1],
+                [0.3, 0.05],
+                [0.4, 0.05],
+                [0.5, 0.05],
+                [0.6, 0.05],
+                [0.7, 0.05],
+                [0.8, 0.05],
+                [0.9, 0.05],
+                [1, 0.05])
 
-    # NRCM values depend on the version used and on scenario chosen (not used in 1972)
-    # ICOR2T values depend on the version used (not used in 1972)
+    # NRCM and ICOR2T are not used in 1972
     if version == 2003:
+        NRCM = world3.addConstant("NRCM", CT, val=([-1, 0], [0, 0]))
         if scene.resource_tech:
-            NRCM = world3.addConstant("NRCM", CT, val=([-1, -0.04],
-                                                 [0, 0]))
-        else:
-            NRCM = world3.addConstant("NRCM", CT, val=([-1, 0],
-                                                 [0, 0]))
-        ICOR2T = world3.addConstant("ICOR2T", CT, val=([0, 3.75],
-                                                 [0.1, 3.6],
-                                                 [0.2, 3.47],
-                                                 [0.3, 3.36],
-                                                 [0.4, 3.25],
-                                                 [0.5, 3.16],
-                                                 [0.6, 3.1],
-                                                 [0.7, 3.06],
-                                                 [0.8, 3.02],
-                                                 [0.9, 3.01],
-                                                 [1, 3]))
+            NRCM.val=([-1, -0.04], [0, 0])
+        ICOR2T = world3.addConstant(
+            "ICOR2T", CT, val=(
+                [0, 3.75],
+                [0.1, 3.6],
+                [0.2, 3.47],
+                [0.3, 3.36],
+                [0.4, 3.25],
+                [0.5, 3.16],
+                [0.6, 3.1],
+                [0.7, 3.06],
+                [0.8, 3.02],
+                [0.9, 3.01],
+                [1, 3]))
 
         nrcm = world3.addFlow("nrcm")
         icor2t = world3.addFlow("icor2t")
 
     pcrum = world3.addFlow("pcrum")
-    fcaor = world3.addFlow("fcaor") #"fraction of capital allocated to obtaining resources"
+    fcaor = world3.addFlow(
+        "fcaor", detail="fraction of capital allocated to obtaining resources")
     fcaor1 = world3.addFlow("fcaor1")
     fcaor2 = world3.addFlow("fcaor2")
 
@@ -1412,7 +1465,7 @@ def load(world3, scenario=1, version=2003):
 
     if version == 1972:
         world3.add_equation(clip, icor, [ICOR2, ICOR1, t, PYEAR])
-    if version == 2003:
+    elif version == 2003:
         world3.add_equation(clip, icor, [icor2, ICOR1, t, PYEAR])
 
     world3.add_equation(nodes_dif, ic, [icir, icdr])
