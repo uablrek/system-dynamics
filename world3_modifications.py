@@ -69,17 +69,44 @@ def remove_unit_constants(s):
 
 # Adjust LE in population dynamic simulation
 def adjust_le(s):
-    # Remove the "bump" in simulated le (seem to be a bad idea)
-    lmhs1 = s.nodes['lmhs1']
-    lmhs = s.nodes['lmhs']
-    #s.add_equation(sd.f_sum, lmhs, [lmhs1])
-    # Adjust LE
     le = s.nodes['le']
-    def f_ale(le):
-        return le * 1.06
-    ale = s.addFlow('ale', detail="Adjusted Life Expectancy")
-    s.add_equation(f_ale, ale, [le])
-
+    t = s.nodes['time']
+    # LE at 1900 is 32y (not 28)
+    LEN = s.nodes['LEN']
+    LEN.val=32
+    # Adjust lmhs
+    LMHS3 = s.addConstant(
+        "LMHS3", sd.CT, val=(
+            [0, 1],
+            [20, 1.4],
+            [40, 1.6],
+            [60, 1.8],
+            [70, 1.8],
+            [80, 2],
+            [100, 2]),
+        detail="Lifetime Multiplier from Health Services (modified)",
+        unit="f(ehspc)")
+    lmhs3 = s.addFlow('lmhs3')
+    ehspc = s.nodes['ehspc']
+    lmhs = s.nodes['lmhs']
+    s.add_equation(sd.f_tab, lmhs3, [LMHS3, ehspc])
+    s.add_equation(sd.f_sum, lmhs, [lmhs3])
+    # Adjust LE used in population dynamic
+    LEA = s.addConstant(
+        "LEA", sd.CT, val=[
+            (1900, 0.9),
+            (1925, 0.8),
+            (1950, 0.9),
+            (1975, 1.13),
+            (2000, 1.25),
+            (2010, 1.3),
+            (2100, 1.3)
+        ], detail="Life Expectancy Adjust", unit="f(t)")
+    ale = s.addFlow('ale', detail="Adjusted Life Expectancy", unit="years")
+    def f_ale(LEA, t, le):
+        x = sd.f_tab(LEA, t)
+        return le * x
+    s.add_equation(f_ale, ale, [LEA, t, le])
     M1 = s.nodes['M1']
     M2 = s.nodes['M2']
     M3 = s.nodes['M3']

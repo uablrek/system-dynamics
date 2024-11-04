@@ -81,6 +81,7 @@ scenario4.land_yield_tech = True
 scenario5 = scenario4.copy()
 scenario5.land_protection_year = 2002
 
+# CT
 scenario6 = scenario5.copy()
 scenario6.resource_tech = True
 
@@ -93,6 +94,7 @@ scenario8.stable_industrial_output = True
 scenario8.industrial_equilibrium_year = 2002
 scenario8.policy_year = 2002
 
+# SW
 scenario9 = scenario8.copy()
 scenario9.pollution_control = True
 scenario9.land_yield_tech = True
@@ -292,7 +294,7 @@ def load(world3, scenario=1, version=2003):
             [80, 1.95],
             [100, 2]),
         detail="Lifetime Multiplier from Health Services",
-        unit="f(ehspc/gdpu)")
+        unit="f(ehspc)")
     if version == 2003:
         LMHS2.val = (
             [0, 1],
@@ -368,9 +370,9 @@ def load(world3, scenario=1, version=2003):
     PET = world3.addConstant(
         "PET", C, val=NEVER, detail="Population Equilibrium Time", unit="year")
     MTFN = world3.addConstant(
-        "MTFN", C, val=12, detail="Maximum Total Fertility Normal", unit='?')
+        "MTFN", C, val=12, detail="Maximum Total Fertility Normal")
     LPD = world3.addConstant(
-        "LPD", C, val=20, detail="Lifetime Perception Delay", unit='?')
+        "LPD", C, val=20, detail="Lifetime Perception Delay")
     AIOPCI = world3.addConstant(
         "AIOPCI", C, val=43.3,
         detail="Initial Average Industrial Output Per Capita")
@@ -518,7 +520,8 @@ def load(world3, scenario=1, version=2003):
         ICOR2 = world3.addConstant("ICOR2", C, val=3)
 
     ICI = world3.addConstant("ICI", C, val=2.1e11)
-    ALIC1 = world3.addConstant("ALIC1", C, val=14)
+    ALIC1 = world3.addConstant(
+        "ALIC1", C, val=14, detail="Average Lifetime of Industrial Capital")
     #"Average Lifetime of Industrial Capital"
     # ALIC2 values depend on scenario chosen
     ALIC20 = 18 if scene.stable_industrial_output else 14
@@ -559,7 +562,7 @@ def load(world3, scenario=1, version=2003):
 
     iopc = world3.addFlow(
         "iopc", detail="Industrial Output Per Capita", unit="unit")
-    io = world3.addFlow("io", detail="Industrial Opuput", unit='?')
+    io = world3.addFlow("io", detail="Industrial Opuput")
     icor = world3.addFlow("icor", detail="Industrial Capital-Output Ratio")
 
     # ICOR2 values depend on the version used (is a NodeConstant if
@@ -632,7 +635,7 @@ def load(world3, scenario=1, version=2003):
     scdr = world3.addFlow("scdr")
     alsc = world3.addFlow("alsc")
     so = world3.addFlow("so")
-    sopc = world3.addFlow("sopc", detail="Service Output Per Capita", unit='?')
+    sopc = world3.addFlow("sopc", detail="Service Output Per Capita")
     scor = world3.addFlow("scor")
 
     # Related to jobs
@@ -741,7 +744,7 @@ def load(world3, scenario=1, version=2003):
     lfc = world3.addFlow("lfc")
     al = world3.addStock("al", val=ALI.val)
     pal = world3.addStock("pal", val=PALI.val)
-    f = world3.addFlow("f", detail="Food", unit='?')
+    f = world3.addFlow("f", detail="Food")
     fpc = world3.addFlow("fpc", detail="Food Per Capita", unit="fraction")
     ifpc = world3.addFlow("ifpc")
     tai = world3.addFlow("tai")
@@ -1155,7 +1158,7 @@ def load(world3, scenario=1, version=2003):
     fcaor1 = world3.addFlow("fcaor1")
     fcaor2 = world3.addFlow("fcaor2")
 
-    nr = world3.addStock("nr", val=NRI.val, detail="Resources", unit='?')
+    nr = world3.addStock("nr", val=NRI.val, detail="Resources")
     nrur = world3.addFlow("nrur")
     nruf = world3.addFlow("nruf")
 
@@ -1287,15 +1290,17 @@ def load(world3, scenario=1, version=2003):
     resint = world3.addFlow("resint")
     plinid = world3.addFlow("plinid")
     cio = world3.addFlow("cio")
-    ciopc = world3.addFlow("ciopc", detail="Consumed Industrial Output Per Capita", unit='?')
+    ciopc = world3.addFlow(
+        "ciopc", detail="Consumed Industrial Output Per Capita")
 
     lei = world3.addFlow("lei")
     ei = world3.addFlow("ei")
     gdppc = world3.addFlow("gdppc")
 
-    hwi = world3.addFlow("hwi")
+    hwi = world3.addFlow("hwi", detail="Human Welfare Index")
     gdpi = world3.addFlow("gdpi")
-    hef = world3.addFlow("hef")
+    hef = world3.addFlow(
+        "hef", detail="Human Ecological Footprint", unit="global-ha/person")
     algha = world3.addFlow("algha")
     alggha = world3.addFlow("alggha")
     ulgha = world3.addFlow("ulgha")

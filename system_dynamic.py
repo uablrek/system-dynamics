@@ -419,38 +419,21 @@ class System:
         ax = plt.axes()
         ax.set(xlabel=self.time_unit)
         ax.grid(axis='x', linestyle=':')
+        times = self.nodes['time'].hist
         y_offset = 50   # Offset additional Y-axis outward
+        engfmt = None
         if formatter == "eng":
             engfmt = EngFormatter(places=1, sep="\N{THIN SPACE}")
             y_offset = 65
-        s = nodes[0]
-        if type(s) is tuple:
-            s, lim = s
-            ax.set_ylim(lim)
-        ax.set(ylabel=f'{s.detail} ({s.unit})')
-        if formatter == "eng": ax.yaxis.set_major_formatter(engfmt)
-        #ax.tick_params(axis='y', rotation=90)
         i = 0
-        times = self.nodes['time'].hist
-        # The "C0" color used here allows 10 schemes by default
-        p, = ax.plot(times, s.hist, f'C{i}')
-        ax.yaxis.label.set_color(p.get_color())
-        ax.tick_params(axis='y', colors=p.get_color())
-        for s in nodes[1:]:
+        n = nodes[0]
+        _plot_node(
+            i, times, ax, n, formatter=engfmt, y_offset=y_offset)
+        for n in nodes[1:]:
             i = i + 1
             t = ax.twinx()
-            if type(s) is tuple:
-                s, lim = s
-                t.set_ylim(lim)
-            t.set(ylabel=f'{s.detail} ({s.unit})')
-            if formatter == "eng": t.yaxis.set_major_formatter(engfmt)
-            #t.tick_params(axis='y', rotation=90)
-            if i > 1:
-                t.spines['right'].set_position(("outward", y_offset * (i-1)))
-                # (this may make y-axes to overlap, which look ugly)
-            p, = t.plot(times, s.hist, f'C{i}')
-            t.yaxis.label.set_color(p.get_color())
-            t.tick_params(axis='y', colors=p.get_color())
+            _plot_node(
+                i, times, t, n, formatter=engfmt, y_offset=y_offset)
         fig.tight_layout()
         if pause > 0:
             plt.pause(pause)
@@ -610,30 +593,6 @@ class System:
                 case str(C):
                     node.val = n['val']
 
-def __plot_node(i, times, ax, n, y_offset=65, formatter=None, add=False):
-    if add:
-        if type(n) is tuple:
-            n, _ = n
-        ax.plot(times, n.hist, f'C{i}--', linewidth=0.5)
-        return
-    if type(n) is tuple:
-        n, lim = n
-        ax.set_ylim(lim)
-    p, = ax.plot(times, n.hist, f'C{i}')        
-    if formatter:
-        ax.yaxis.set_major_formatter(formatter)
-    ax.set(ylabel=f'{n.detail} ({n.unit})')
-    if i > 1:
-        ax.spines['right'].set_position(("outward", y_offset * (i-1)))
-    ax.yaxis.label.set_color(p.get_color())
-    ax.tick_params(axis='y', colors=p.get_color())
-def __get_node(s, n):
-    if type(n) is tuple:
-        n, lim = n
-        return (s.nodes[n], lim)
-    else:
-        return s.nodes[n]
-
 # Plot nodes from different system runs
 def plot_nodes(
         s1, s2, nodes=[], title=None, size=(10,5), formatter="eng"):
@@ -653,15 +612,43 @@ def plot_nodes(
     times = s1.nodes['time'].hist
     i = 0
     n = nodes[0]
-    __plot_node(i, times, ax, __get_node(s1, n), formatter=engfmt)
-    __plot_node(i, times, ax, __get_node(s2, n), add=True)
+    _plot_node(i, times, ax, __get_node(s1, n), formatter=engfmt)
+    _plot_node(i, times, ax, __get_node(s2, n), add=True)
     for n in nodes[1:]:
         i = i + 1
         t = ax.twinx()
-        __plot_node(i, times, t, __get_node(s1, n), formatter=engfmt)
-        __plot_node(i, times, t, __get_node(s2, n), add=True)
+        _plot_node(i, times, t, __get_node(s1, n), formatter=engfmt)
+        _plot_node(i, times, t, __get_node(s2, n), add=True)
     fig.tight_layout()
     plt.show()
+# Plot node help functions
+def _plot_node(i, times, ax, n, y_offset=65, formatter=None, add=False):
+    if add:
+        if type(n) is tuple:
+            n, _ = n
+        ax.plot(times, n.hist, f'C{i}--', linewidth=0.5)
+        return
+    if type(n) is tuple:
+        n, lim = n
+        ax.set_ylim(lim)
+    p, = ax.plot(times, n.hist, f'C{i}')        
+    if formatter:
+        ax.yaxis.set_major_formatter(formatter)
+    if n.unit:
+        ax.set(ylabel=f'{n.detail} ({n.unit})')
+    else:
+        ax.set(ylabel=f'{n.detail}')
+    if i > 1:
+        ax.spines['right'].set_position(("outward", y_offset * (i-1)))
+    ax.yaxis.label.set_color(p.get_color())
+    ax.tick_params(axis='y', colors=p.get_color())
+def __get_node(s, n):
+    if type(n) is tuple:
+        n, lim = n
+        return (s.nodes[n], lim)
+    else:
+        return s.nodes[n]
+
 
 
 # Common functions used in equations

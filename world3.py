@@ -9,6 +9,7 @@ import numpy
 import matplotlib.pyplot as plt
 import world3_modifications as w3mod
 
+ts=0.2
 stitle=[
     "BAU",
     "BAU2",
@@ -22,11 +23,14 @@ stitle=[
     "SW Change Year 1982",
     "SW Change Year 2032",
 ]
+# State of the World nodes
+sow_nodes=[
+    ("pop",(0,12e9)), ("nr",(0,2e12)), ("io",(0,4e12)), ("f",(0,6e12)),
+    ("ppolx",(0,40))]
 
 # Load the world3 model
 def load(scenario):
-    s = sd.System(init_time=1900, end_time=2100, time_step=0.2)
-    world3.load(s, scenario=scenario)
+    s = load_unmodified(scenario)
     # (tweaks goes here...)
     #read_M(s)
     modify_M(s)
@@ -34,14 +38,23 @@ def load(scenario):
     w3mod.adjust_le(s)
     #w3mod.recalibration23(s)
     return s
+def load_unmodified(scenario):
+    s = sd.System(init_time=1900, end_time=2100, time_step=ts)
+    world3.load(s, scenario=scenario)
+    return s
+# Run both an unmodified and a modified model
+def run_both(scenario):
+    s = load(scenario)
+    s.run()
+    s2 = load_unmodified(scenario)
+    s2.run()
+    return s, s2
 
 # Run a scenario and plot data with scales similar to LtG
 def scenario(scenario):
     s = load(scenario)
     s.run()
-    s.plot(
-        ("pop",(0,12e9)), ("nr",(0,2e12)), ("io",(0,4e12)), ("f",(0,6e12)),
-        ("ppolx",(0,40)), title=stitle[scenario-1], formatter="eng")
+    s.plot(*sow_nodes, title=stitle[scenario-1], formatter="eng")
 
 # Animate resources from 1e12 (bau1) to 2e12 (bau2)
 def bau2_animation():
@@ -53,10 +66,7 @@ def bau2_animation():
         nr.hist[0] = r
         s.reset()
         s.run()
-        s.plot(
-            ("pop",(0,10e9)), ("nr",(0,2e12)), ("io",(0,4e12)), ("f",(0,6e12)),
-            ("ppolx",(0,40)), title="State Of The World", pause=2,
-            formatter="eng")
+        s.plot(*sow_nodes, title="State Of The World", pause=2, formatter="eng")
         #plt.savefig(f"bau2-{r}.svg", format="svg", transparent=True)
     plt.show()   # keep the window open after the last iteration
 
@@ -67,8 +77,7 @@ def demography(scenario):
     load_wpop(s)
     load_wle(s)
     s.run()
-    s2 = sd.System(init_time=1900, end_time=2100, time_step=0.2)
-    world3.load(s2, scenario=scenario)
+    s2 = load_unmodified(scenario)
     load_wpop(s2)
     load_wle(s2)
     s2.run()
@@ -82,18 +91,26 @@ def model_graph():
      s.graphviz(title="World3")
 
 # Compare a modified system with an unmodified
-def dual_sys_plot(scenario):
-    s = load(scenario)
-    s.run()
-    s2 = sd.System(init_time=1900, end_time=2100, time_step=0.2)
-    world3.load(s2, scenario=scenario)
-    s2.run()
+def compare(scenario):
+    s, s2 = run_both(scenario)
+    sd.plot_nodes(s, s2, nodes=sow_nodes, title=stitle[scenario-1])
+
+def compare_welfare(scenario):
+    s, s2 = run_both(scenario)
     nodes=[
-        ("pop",(0,12e9)), ("nr",(0,2e12)), ("io",(0,4e12)), ("f",(0,6e12)),
-        ("ppolx",(0,40))]
-    sd.plot_nodes(s, s2, nodes=nodes, title=stitle[scenario-1])
+        ("fpc",(0, 1e3)),("le",(0, 90)),("sopc",(0, 1e3)),("ciopc",(0, 250))]
+    sd.plot_nodes(s, s2, nodes=nodes, title=stitle[scenario-1], formatter='')
+    nodes=[("hwi",(0, 1)),("hef",(0, 4))]
+    sd.plot_nodes(s, s2, nodes=nodes, title=stitle[scenario-1], formatter='')
 
-
+# Compare BAU and BAU2
+def compare_bau():
+    s = load_unmodified(2)
+    s.run()
+    s2 = load_unmodified(1)
+    s2.run()
+    sd.plot_nodes(s, s2, nodes=sow_nodes, title="BAU2 (and BAU)")
+    
 # Run a function
 import sys
 if __name__ == "__main__":
@@ -103,4 +120,6 @@ if __name__ == "__main__":
     scenario(n)
     #demography(n)
     #bau2_animation()
-    #dual_sys_plot(n)
+    #compare(n)
+    #compare_welfare(n)
+    #compare_bau()

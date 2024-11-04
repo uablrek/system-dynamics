@@ -20,7 +20,8 @@ wanted to try for myself. So I tested the models referred from the
 * [pyworld3](https://github.com/cvanwynsberghe/pyworld3) --
   Easy to run, but the code is not object oriented. E.g. there is no `stock`
   class. This makes it hard to understand and to transform to a generic
-  SD library. It also has too many dependencies
+  SD library. The author's [blog post](
+  https://towardsdatascience.com/exploring-the-limits-to-growth-with-python-674133874eed) is very good reading.
 * [PyWorld3-03](https://github.com/TimSchell98/PyWorld3-03) --
   An update of the above, used for the recalibration of the model
   referred above
@@ -35,6 +36,9 @@ wanted to try for myself. So I tested the models referred from the
   An *excellent* implementation! Easy to run and understand. Clear classes
   and basically no dependencies. Perfect for use as a SD library
 
+For *real* hard core enthusiasts a DYNAMO interpreter and the original
+model can be found [here](https://github.com/bfix/dynamo) (I haven't
+tested it yet).
 
 I can't verify that the models are *really* implementing `world3`, but
 the Python models overlay the simulation plots on top of original
@@ -47,6 +51,22 @@ modified `world3_model.py` to use it. Here is a BAU2 plot as an
 example (BAU dashed):
 
 <img src="figures/plot_bau2.svg" />
+
+
+## Recalibration of limits to growth: An update of the World3 model
+
+To recalibrate the model was what got me started with this project.  I
+read the [An update of the World3 model](
+https://onlinelibrary.wiley.com/doi/full/10.1111/jiec.13442) but the
+result does not seem right. The pollution in "recalibration23" is
+*way* lower than BAU. If that was right we could continue to burn
+fossile fuels without worries, it's only shortage of resources that is
+the problem.
+
+I was also curious on *why* some values needed so large
+calibration. In the case of `alic1` (a wopping 662.15% change), the
+answer is simple: it's a bug. The default is not `2`, it's `14`.
+
 
 
 ## Animations
@@ -77,6 +97,14 @@ https://en.wikipedia.org/wiki/Great_Leap_Forward) in 1960,
 and by `Covid-19`. The leap in simulation LE is a sudden change in
 "Lifetime Multiplier from Health Services" in 1940.
 
+The population in the world rises faster than in the model, and life
+expectancy is much higher in the model in recent years.  The life
+expectancy (LE) at 1900 is 32 years, but is 28 years in the model
+(LEN). It is possible that the estimate *was* 28 years when `world3`
+was created. I don't like the LE leap in the model at 1940. It seems
+like a "fix" to get the population plot to match up to 1970 (which it
+does perfectly). There is no such leap IRL.
+
 ### Implementation
 
 Empirical data can *easily* be defined using a table constant (CT)
@@ -84,22 +112,6 @@ Empirical data can *easily* be defined using a table constant (CT)
 plotting. Since empirical data stops at the current year (2024) the
 remaining values becomes `None` and are not plotted.
 
-### Analysis
-
-The population in the world rises faster than in the model, and life
-expectancy is much higher in the model in recent years. This indicates
-that the model assumes a higher average age.
-
-The life expectancy (LE) at 1900 is 32 years, but is 28 years in the
-model (LEN). It is possible that the estimate *was* 28 years when
-`world3` was created. I don't like the LE leap in the model at
-1940. It seems like a "fix" to get the population plot to match up to
-1970 (which it does perfectly). There is no such leap IRL.
-
-IMHO these are serious differences, and not well addressed in the
-[recalibration of the model](
-https://onlinelibrary.wiley.com/doi/full/10.1111/jiec.13442).
-I will try to tune the model in this area.
 
 ## Population system
 
@@ -162,43 +174,30 @@ The updated mortality rates are read from [data/M.json](data/M.json).
 You can modify it to test other values.
 
 
-### Adjusted LE in population dynamics
+## Adjusted LE in population dynamics
 
-By adjusting the `le` used in population dynamics by a factor 1.06 we
-get a very good fit with empirical data (unmodified dashed).
+I want to get life expectancy (LE) and population closer to empirical
+data, and remove the "bump" in LE at 1940. Here is what I did (all
+in [world3_modifications.py](world3_modifications.py)):
+
+* Set LE at 1900 to 32 years
+* Adjusted `lmhs` (Lifetime Multiplier from Health Services), and
+  removed the bump
+* Adjust LE used in population dynamic by a factor depending on year
 
 <img src="figures/plot_pop2.svg" />
 
-The simulation `le` don't overshoot so much. This is how the adjustment
-affects BAU2
+This is how the adjustment affects BAU2 (unmodified dashed):
 
 <img src="figures/bau2_pop2.svg" />
 
 Beside a better conformance with population data, the industrial
-output peaks at a lower level.  The peak is around 2040. But remember,
-the `world3` doesn't model political conflicts like wars.
+output peaks at a lower level. Other differences are small.
+Here is the welfare plot with modified le/pop:
+
+<img src="figures/hef_pop2.svg" />
 
 
-## Recalibration of limits to growth: An update of the World3 model
-
-To recalibrate the model was what got me started with this project.  I
-read the [An update of the World3 model](
-https://onlinelibrary.wiley.com/doi/full/10.1111/jiec.13442) but the
-result does not seem right. The pollution in "recalibration23" is
-*way* lower than BAU. If that was right we could continue to burn
-fossile fuels without worries, it's only shortage of resources that is
-the problem.
-
-I was also curious on *why* some values needed so large
-calibration. In the case of `alic1` (a wopping 662.15% change), the
-answer is simple: it's a bug. The default is not `2`, it's `14`. That
-goes for both the [original DYNAMO model](
-https://github.com/bfix/dynamo/blob/master/rt/world/world3-orig.dynamo)
-as well as the [PyWorld3-03](
-https://github.com/TimSchell98/PyWorld3-03) model used for the recalibration.
-As an example here is a `BAU` run with alic1=2:
-
-<img src="figures/bau-faulty-alic1.svg" />
 
 
 
