@@ -44,7 +44,7 @@ enough for me.
 I took the code from [MyWorld3](https://github.com/Juji29/MyWorld3)
 and modified `system_dynamic.py` to be a generic SD library, and
 modified `world3_model.py` to use it. Here is a BAU2 plot as an
-example (run with "./world3.py"):
+example (BAU dashed):
 
 <img src="figures/plot_bau2.svg" />
 
@@ -191,7 +191,7 @@ the problem.
 
 I was also curious on *why* some values needed so large
 calibration. In the case of `alic1` (a wopping 662.15% change), the
-answer is easy: it's bug. The default is not `2`, it's `14`. That
+answer is simple: it's a bug. The default is not `2`, it's `14`. That
 goes for both the [original DYNAMO model](
 https://github.com/bfix/dynamo/blob/master/rt/world/world3-orig.dynamo)
 as well as the [PyWorld3-03](
@@ -199,7 +199,6 @@ https://github.com/TimSchell98/PyWorld3-03) model used for the recalibration.
 As an example here is a `BAU` run with alic1=2:
 
 <img src="figures/bau-faulty-alic1.svg" />
-
 
 
 
