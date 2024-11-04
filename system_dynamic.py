@@ -419,7 +419,7 @@ class System:
         ax = plt.axes()
         ax.set(xlabel=self.time_unit)
         ax.grid(axis='x', linestyle=':')
-        y_offset = 50   # Offet additional Y-axis outward
+        y_offset = 50   # Offset additional Y-axis outward
         if formatter == "eng":
             engfmt = EngFormatter(places=1, sep="\N{THIN SPACE}")
             y_offset = 65
@@ -609,6 +609,59 @@ class System:
                     node.val = n['val']
                 case str(C):
                     node.val = n['val']
+
+def __plot_node(i, times, ax, n, y_offset=65, formatter=None, add=False):
+    if add:
+        if type(n) is tuple:
+            n, _ = n
+        ax.plot(times, n.hist, f'C{i}--', linewidth=0.5)
+        return
+    if type(n) is tuple:
+        n, lim = n
+        ax.set_ylim(lim)
+    p, = ax.plot(times, n.hist, f'C{i}')        
+    if formatter:
+        ax.yaxis.set_major_formatter(formatter)
+    ax.set(ylabel=f'{n.detail} ({n.unit})')
+    if i > 1:
+        ax.spines['right'].set_position(("outward", y_offset * (i-1)))
+    ax.yaxis.label.set_color(p.get_color())
+    ax.tick_params(axis='y', colors=p.get_color())
+def __get_node(s, n):
+    if type(n) is tuple:
+        n, lim = n
+        return (s.nodes[n], lim)
+    else:
+        return s.nodes[n]
+
+# Plot nodes from different system runs
+def plot_nodes(
+        s1, s2, nodes=[], title=None, size=(10,5), formatter="eng"):
+    if not nodes:
+        return
+    engfmt=None
+    if formatter == "eng":
+        engfmt = EngFormatter(places=1, sep="\N{THIN SPACE}")
+    fig = plt.gcf()         # (Get Current Figure)
+    fig.set_size_inches(size)
+    fig.clear()
+    if title:
+        fig.suptitle(title)
+    ax = plt.axes()
+    ax.set(xlabel=s1.time_unit)
+    ax.grid(axis='x', linestyle=':')
+    times = s1.nodes['time'].hist
+    i = 0
+    n = nodes[0]
+    __plot_node(i, times, ax, __get_node(s1, n), formatter=engfmt)
+    __plot_node(i, times, ax, __get_node(s2, n), add=True)
+    for n in nodes[1:]:
+        i = i + 1
+        t = ax.twinx()
+        __plot_node(i, times, t, __get_node(s1, n), formatter=engfmt)
+        __plot_node(i, times, t, __get_node(s2, n), add=True)
+    fig.tight_layout()
+    plt.show()
 
 
 # Common functions used in equations

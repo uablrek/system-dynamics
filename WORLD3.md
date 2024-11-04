@@ -165,11 +165,11 @@ You can modify it to test other values.
 ### Adjusted LE in population dynamics
 
 By adjusting the `le` used in population dynamics by a factor 1.06 we
-get a very good fit with empirical data.
+get a very good fit with empirical data (unmodified dashed).
 
 <img src="figures/plot_pop2.svg" />
 
-Even the simulation `le` gets a better fit. This is how the adjustment
+The simulation `le` don't overshoot so much. This is how the adjustment
 affects BAU2
 
 <img src="figures/bau2_pop2.svg" />
@@ -177,3 +177,30 @@ affects BAU2
 Beside a better conformance with population data, the industrial
 output peaks at a lower level.  The peak is around 2040. But remember,
 the `world3` doesn't model political conflicts like wars.
+
+
+## Recalibration of limits to growth: An update of the World3 model
+
+To recalibrate the model was what got me started with this project.  I
+read the [An update of the World3 model](
+https://onlinelibrary.wiley.com/doi/full/10.1111/jiec.13442) but the
+result does not seem right. The pollution in "recalibration23" is
+*way* lower than BAU. If that was right we could continue to burn
+fossile fuels without worries, it's only shortage of resources that is
+the problem.
+
+I was also curious on *why* some values needed so large
+calibration. In the case of `alic1` (a wopping 662.15% change), the
+answer is easy: it's bug. The default is not `2`, it's `14`. That
+goes for both the [original DYNAMO model](
+https://github.com/bfix/dynamo/blob/master/rt/world/world3-orig.dynamo)
+as well as the [PyWorld3-03](
+https://github.com/TimSchell98/PyWorld3-03) model used for the recalibration.
+As an example here is a `BAU` run with alic1=2:
+
+<img src="figures/bau-faulty-alic1.svg" />
+
+
+
+
+

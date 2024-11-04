@@ -73,7 +73,11 @@ cmd_animate() {
 	test -x $svgasm || die "Not executable [$svgasm]"
 	$svgasm -d $__delay -o $__out -c "$cleaner" $@
 }
-
+##   ruler
+##     Display a transparent ruler window
+cmd_ruler() {
+	pqiv -c -i figures/rulers.svg &
+}
 
 ##
 # Get the command
