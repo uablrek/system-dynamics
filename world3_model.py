@@ -355,7 +355,8 @@ def load(world3, scenario=1, version=2003):
     lmp = world3.addFlow("lmp", detail="Lifetime Multiplier from Polution")
 
     d = world3.addFlow("d", detail="Deaths per year", unit="capita")
-    cdr = world3.addFlow("cdr", detail="Crude Death Rate")
+    cdr = world3.addFlow(
+        "cdr", detail="Crude Death Rate", unit="deaths/1000people")
     lmhs = world3.addFlow(
         "lmhs", detail="Lifetime Multiplier from Health Services")
     ehspc = world3.addStock(
@@ -493,7 +494,8 @@ def load(world3, scenario=1, version=2003):
         "fsafc", detail="Fraction of Services Allocated to Fertility Control")
 
     b = world3.addFlow("b", detail="Births", unit="children/year")
-    cbr = world3.addFlow("cbr", detail="Crude Birth Rate")
+    cbr = world3.addFlow(
+        "cbr", detail="Crude Birth Rate", unit="births/1000people")
     tf = world3.addFlow("tf", detail="Total Fertility")
     mtf = world3.addFlow("mtf")
     dtf = world3.addFlow("dtf")

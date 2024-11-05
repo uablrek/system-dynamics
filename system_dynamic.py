@@ -650,6 +650,59 @@ def __get_node(s, n):
         return s.nodes[n]
 
 
+# NRMSE isn't really SD, but is used to compare the model
+# with empirical data.
+# https://discovery.cs.illinois.edu/guides/Statistics-with-Python/rmse/
+import numpy as np
+def nrmse(empiric, model):
+    actual = np.array(empiric)
+    predicted = np.array(model)
+    mse = ((predicted - actual) ** 2).mean()
+    return np.sqrt(mse)/actual.mean()
+# If an interval, e.g (2000,2100), is given, then time *must* be the
+# 'time' stock!
+def nrmse_nodes(empiric, model, time=None, interval=None):
+    actual = empiric.hist
+    predicted = model.hist
+    # The 2 arrays have the same length, but "predicted" may contain
+    # None values. If the interval is given (tuple), the first is
+    # included but not the last (as range())
+    if interval:
+        t = time.hist
+        #print(f'time ({t[0]}-{t[-1]})')
+        first, last = interval
+        start = 0
+        while t[start] < first:
+            start = start + 1
+        #print(f'first={first}, last={last}, start={start}')
+        if last > t[-1]:
+            stop = len(t) - 1
+        else:
+            stop = start
+            while t[stop] <= last:
+                stop = stop + 1
+        actual = actual[start:stop]
+        predicted = predicted[start:stop]
+    # Exclude None-values in the "actual" array
+    if actual[0] == None:
+        start = 0
+        while actual[start] == None:
+            start = start + 1
+        actual = actual[start:]
+        predicted = predicted[start:]
+    if actual[-1] == None:
+        stop = 1
+        while actual[stop] != None:
+            stop = stop + 1
+        actual = actual[:stop]
+        predicted = predicted[:stop]
+    return nrmse(actual, predicted)
+# Convenient function for nrmse in systems
+def nrmse_snodes(s, empiric, model, interval=None):
+    n1 = s.nodes[empiric]
+    n2 = s.nodes[model]
+    t = s.nodes["time"]
+    return nrmse_nodes(n1, n2, time=t, interval=interval)
 
 # Common functions used in equations
 def f_sum(*l):

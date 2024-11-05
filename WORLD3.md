@@ -21,7 +21,8 @@ wanted to try for myself. So I tested the models referred from the
   Easy to run, but the code is not object oriented. E.g. there is no `stock`
   class. This makes it hard to understand and to transform to a generic
   SD library. The author's [blog post](
-  https://towardsdatascience.com/exploring-the-limits-to-growth-with-python-674133874eed) is very good reading.
+  https://towardsdatascience.com/exploring-the-limits-to-growth-with-python-674133874eed)
+  is very good reading.
 * [PyWorld3-03](https://github.com/TimSchell98/PyWorld3-03) --
   An update of the above, used for the recalibration of the model
   referred above

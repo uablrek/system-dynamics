@@ -3,13 +3,13 @@
 
 import system_dynamic as sd
 import world3_model as world3
-from demographics import load_wpop, load_wle
+from demographics import load_wpop, load_wle, load_wcbr, load_wcdr
 from le import modify_M, read_M
 import numpy
 import matplotlib.pyplot as plt
 import world3_modifications as w3mod
 
-ts=0.2
+ts=0.5
 stitle=[
     "BAU",
     "BAU2",
@@ -71,7 +71,7 @@ def bau2_animation():
     plt.show()   # keep the window open after the last iteration
 
 
-# Plot population and life expectancy against empirical data
+# Compare population and life expectancy to empirical data
 def demography(scenario):
     s = load(scenario)
     load_wpop(s)
@@ -81,6 +81,17 @@ def demography(scenario):
     load_wpop(s2)
     load_wle(s2)
     s2.run()
+    t = s.nodes["time"]
+    interval=(2000,2025)
+    print(f"Normalized Root Mean Square Error (or Difference): {interval}")
+    nrmse = sd.nrmse_snodes(s2, 'wpop', 'pop', interval=interval)
+    print(f"NRMSE(pop) = {nrmse*100:.2f}% (unmodified)")
+    nrmse = sd.nrmse_snodes(s, 'wpop', 'pop', interval=interval)
+    print(f"NRMSE(pop) = {nrmse*100:.2f}%")
+    nrmse = sd.nrmse_snodes(s2, 'wle', 'le', interval=interval)
+    print(f"NRMSE(le) = {nrmse*100:.2f}% (unmodified)")
+    nrmse = sd.nrmse_snodes(s, 'wle', 'le', interval=interval)
+    print(f"NRMSE(le) = {nrmse*100:.2f}%")
     nodes=[("pop",(0,10e9)), ("wpop",(0,10e9)), ("le",(0,90)), ("wle",(0,90))]
     sd.plot_nodes(s, s2, nodes=nodes, title=stitle[scenario-1], size=(8,4))
 
@@ -109,8 +120,31 @@ def compare_bau():
     s.run()
     s2 = load_unmodified(1)
     s2.run()
+    load_wcbr(s)
+    load_wcbr(s2)
     sd.plot_nodes(s, s2, nodes=sow_nodes, title="BAU2 (and BAU)")
-    
+
+def crude_rates(scenario):
+    s = load(scenario)
+    load_wcbr(s)
+    load_wcdr(s)
+    s.run()
+    s2 = load_unmodified(scenario)
+    load_wcbr(s2)
+    load_wcdr(s2)
+    s2.run()
+    print(f"Normalized Root Mean Square Error (or Difference)")
+    nrmse = sd.nrmse_snodes(s2, 'wcbr', 'cbr')
+    print(f"NRMSE(cbr) = {nrmse*100:.2f}% (unmodified)")
+    nrmse = sd.nrmse_snodes(s, 'wcbr', 'cbr')
+    print(f"NRMSE(cbr) = {nrmse*100:.2f}%")
+    nrmse = sd.nrmse_snodes(s2, 'wcdr', 'cdr')
+    print(f"NRMSE(cdr) = {nrmse*100:.2f}% (unmodified)")
+    nrmse = sd.nrmse_snodes(s, 'wcdr', 'cdr')
+    print(f"NRMSE(cdr) = {nrmse*100:.2f}%")
+    nodes=[("cbr",(0,50)), ("cdr", (0,50)), ("wcbr",(0,50)), ("wcdr",(0,50))]
+    sd.plot_nodes(s, s2, nodes=nodes, title=stitle[scenario-1])
+
 # Run a function
 import sys
 if __name__ == "__main__":
@@ -123,3 +157,4 @@ if __name__ == "__main__":
     #compare(n)
     #compare_welfare(n)
     #compare_bau()
+    #crude_rates(n)
