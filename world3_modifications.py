@@ -177,3 +177,20 @@ def recalibration23(s):
 def faulty_alic1(s):
     ALIC1 = s.nodes['ALIC1']
     ALIC1.val=2
+
+# Re-calibrate Human Ecological Footprint to align with empirical data
+# from 2003.
+def recalibrate_hef(s):
+    # Keep the gha unit
+    GHAH = s.nodes["GHAH"]
+    GHAH.val = 1
+    # Adjust Absorbtion Land
+    HUP = s.nodes["HUP"]
+    HUP.val=22
+    # Adjust HEF
+    alggha = s.nodes['alggha']
+    ulgha = s.nodes['ulgha']
+    algha = s.nodes['algha']
+    hef = s.nodes['hef']
+    def f_hef(alggha, ulgha, algha): return alggha * 3 + ulgha * 8 * 4 + algha
+    s.add_equation(f_hef, hef, [alggha, ulgha, algha])

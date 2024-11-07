@@ -163,11 +163,11 @@ if __name__ == "__main__":
     n = 2
     if len(sys.argv) > 1:
         n = int(sys.argv[1])
-    scenario(n)
+    #scenario(n)
     #demography(n)
     #bau2_animation()
     #compare(n)
     #compare_welfare(n)
     #compare_bau()
     #crude_rates(n)
-    #recalibrate_hef(n)
+    recalibrate_hef(n)

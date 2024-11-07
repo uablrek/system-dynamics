@@ -744,7 +744,7 @@ def load(world3, scenario=1, version=2003):
     dcph = world3.addFlow("dcph")
 
     lfc = world3.addFlow("lfc")
-    al = world3.addStock("al", val=ALI.val)
+    al = world3.addStock("al", val=ALI.val, detail="Arable Land")
     pal = world3.addStock("pal", val=PALI.val)
     f = world3.addFlow("f", detail="Food")
     fpc = world3.addFlow("fpc", detail="Food Per Capita", unit="fraction")
@@ -1231,8 +1231,9 @@ def load(world3, scenario=1, version=2003):
         copm = world3.addFlow("copm")
 
     ahlm = world3.addFlow("ahlm")
-    ppgr = world3.addFlow("ppgr")
-    ppgf = world3.addFlow("ppgf")
+    ppgr = world3.addFlow("ppgr", detail="Persistent Pollution Generation Rate")
+    ppgf = world3.addFlow(
+        "ppgf", detail="Persistent Pollution Generation Factor")
 
     # ppgf2 values depend on the version used (is a NodeConstant if version is 1972)
     if version == 2003:
@@ -1258,33 +1259,44 @@ def load(world3, scenario=1, version=2003):
     world3.default_cat = None
 
     POF = world3.addConstant("POF", C, val=0.22)
-    HUP = world3.addConstant("HUP", C, val=4)
+    HUP = world3.addConstant(
+        "HUP", C, val=4, detail="Hectare per Unit of Pollution")
     RHGDP = world3.addConstant("RHGDP", C, val=9508)
     RLGDP = world3.addConstant("RLGDP", C, val=24)
-    TL = world3.addConstant("TL", C, val=1.91)
-    GHAH = world3.addConstant("GHAH", C, val=1e9)
+    TL = world3.addConstant("TL", C, val=1.91, detail="Total Land")
+    GHAH = world3.addConstant(
+        "GHAH", C, val=1e9, detail="Gigahectare per Hectare")
+    # (why not just "G"=1e9)
 
-    LEI = world3.addConstant("LEI", CT, val=([25, 0],
-                                       [35, 0.16],
-                                       [45, 0.33],
-                                       [55, 0.5],
-                                       [65, 0.67],
-                                       [75, 0.84],
-                                       [85, 1]))
-    EI = world3.addConstant("EI", CT, val=([0, 0],
-                                     [1000, 0.81],
-                                     [2000, 0.88],
-                                     [3000, 0.92],
-                                     [4000, 0.95],
-                                     [5000, 0.98],
-                                     [6000, 0.99],
-                                     [7000, 1]))
-    GDPPC = world3.addConstant("GDPPC", CT, val=([0, 120],
-                                           [200, 600],
-                                           [400, 1200],
-                                           [600, 1800],
-                                           [800, 2500],
-                                           [1000, 3200]))
+    LEI = world3.addConstant(
+        "LEI", CT, val=(
+            [25, 0],
+            [35, 0.16],
+            [45, 0.33],
+            [55, 0.5],
+            [65, 0.67],
+            [75, 0.84],
+            [85, 1]),
+        detail="Life Expectancy Index", unit="f(le)")
+    EI = world3.addConstant(
+        "EI", CT, val=(
+            [0, 0],
+            [1000, 0.81],
+            [2000, 0.88],
+            [3000, 0.92],
+            [4000, 0.95],
+            [5000, 0.98],
+            [6000, 0.99],
+            [7000, 1]),
+        detail="Education Index", unit="f(gdppc)")
+    GDPPC = world3.addConstant(
+        "GDPPC", CT, val=(
+            [0, 120],
+            [200, 600],
+            [400, 1200],
+            [600, 1800],
+            [800, 2500],
+            [1000, 3200]))
     foa = world3.addFlow("foa")
     foi = world3.addFlow("foi")
     fos = world3.addFlow("fos")
@@ -1295,17 +1307,17 @@ def load(world3, scenario=1, version=2003):
     ciopc = world3.addFlow(
         "ciopc", detail="Consumed Industrial Output Per Capita")
 
-    lei = world3.addFlow("lei")
-    ei = world3.addFlow("ei")
-    gdppc = world3.addFlow("gdppc")
+    lei = world3.addFlow("lei", detail="Life Expectancy Index")
+    ei = world3.addFlow("ei", detail="Education Index")
+    gdppc = world3.addFlow("gdppc", detail="Gross Domestic Product Per Capita")
 
     hwi = world3.addFlow("hwi", detail="Human Welfare Index")
-    gdpi = world3.addFlow("gdpi")
+    gdpi = world3.addFlow("gdpi", detail="Gross Domestic Product Index")
     hef = world3.addFlow(
-        "hef", detail="Human Ecological Footprint", unit="global-ha/person")
-    algha = world3.addFlow("algha")
-    alggha = world3.addFlow("alggha")
-    ulgha = world3.addFlow("ulgha")
+        "hef", detail="Human Ecological Footprint", unit="gha")
+    algha = world3.addFlow("algha", detail="Absorption Land", unit="gha")
+    alggha = world3.addFlow("alggha", detail="Arable Land", unit="ha")
+    ulgha = world3.addFlow("ulgha", detail="Urban Land", unit="ha")
 
 
 
@@ -1740,23 +1752,18 @@ def load(world3, scenario=1, version=2003):
     # Industrial outputs indexes
     world3.add_equation(nodes_div, resint, [nrur, io])
     world3.add_equation(f_plinid, plinid, [ppgio, ppgf, io])
-
     world3.add_equation(nodes_mltpld, cio, [io, fioac])
     world3.add_equation(nodes_div, ciopc, [cio, pop])
 
     # Human Welfare Index
     world3.add_equation(f_hwi, hwi, [lei, ei, gdpi])
-
     world3.add_equation(f_tab_div, lei, [LEI, le, OY])
-
     world3.add_equation(f_tab_div, ei, [EI, gdppc, GDPU])
-
     world3.add_equation(f_gdpi, gdpi, [gdppc, RLGDP, RHGDP])
     world3.add_equation(f_tab_div, gdppc, [GDPPC, iopc, GDPU])
 
     # Human Ecological Footprint
     world3.add_equation(f_hef, hef, [alggha, ulgha, algha, TL])
-
     world3.add_equation(f_algha, algha, [ppgr, HUP, GHAH])
     world3.add_equation(nodes_div, alggha, [al, GHAH])
     world3.add_equation(nodes_div, ulgha, [uil, GHAH])
