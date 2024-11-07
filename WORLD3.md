@@ -88,8 +88,8 @@ This compares to the BAU2 estimates to empirical demographical
 data. It was surprisingly hard to get consistent data, especially
 before 1950. Here are the sources used:
 
-* https://www.worldometers.info/world-population/world-population-by-year
-* https://sv.wikipedia.org/wiki/V%C3%A4rldens_befolkning
+* https://data.worldbank.org/indicator/SP.POP.TOTL (1960-2023)
+* https://sv.wikipedia.org/wiki/V%C3%A4rldens_befolkning (<1960)
 * https://ourworldindata.org/life-expectancy
 * https://www.statista.com/statistics/805060/life-expectancy-at-birth-worldwide
 
@@ -193,13 +193,39 @@ This is how the adjustment affects BAU2 (unmodified dashed):
 <img src="figures/bau2_pop2.svg" />
 
 Beside a better conformance with population data, the industrial
-output peaks at a lower level. Other differences are small.
-Here is the welfare plot with modified le/pop:
+output peaks at a lower level. Other differences are small.  Here is a
+comparison for crude birth/death rates:
+
+<img src="figures/crude_pop2.svg" />
+
+
+## Human Ecological Footprint
+
+The Human Ecological Footprint (HEF) was obviously computed in a
+different way in 2003 when the variable was introduced in `world3-03`.
+If we assume that the authors calibrated the model to empirical data
+at the time, the HEF at 2003 was ~2Ggha (Giga global ha), but the
+[empirical value](https://data.footprintnetwork.org/#/countryTrends?cn=5001&type=BCtot,EFCtot)
+is ~16Ggha! It is important to know that HEF and HWI are derived
+variables. How we choose to compute them doesn't affect the model at
+all.
+
+My first mistake was to assume that the model computed HEF/capita. It
+doesn't. I was fooled by the low values, 0-4, but values are in Ggha
+total and are divided by 1e9 (the constant "GHAH"). In the model hef
+is computed as (L=Land):
+
+$$ hef = \frac{L_{Arable} + L_{Urban} + L_{Absorption}}{1.91} $$
+
+"Absorption" is the area needed to absorb pollutions. In empirical
+data the closest is [Carbon](https://data.footprintnetwork.org/#/abouttheData),
+which is used for "Absorbtion Land".
+
+
+We want to
+test the model, so we re-calibrate the HEF to align with the 2003
+value (~16Ggha), and check the match before and after 2003:
 
 <img src="figures/hef_pop2.svg" />
-
-
-
-
 
 

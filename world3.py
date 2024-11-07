@@ -3,7 +3,7 @@
 
 import system_dynamic as sd
 import world3_model as world3
-from demographics import load_wpop, load_wle, load_wcbr, load_wcdr
+import empirical_data as emp
 from le import modify_M, read_M
 import numpy
 import matplotlib.pyplot as plt
@@ -74,12 +74,12 @@ def bau2_animation():
 # Compare population and life expectancy to empirical data
 def demography(scenario):
     s = load(scenario)
-    load_wpop(s)
-    load_wle(s)
+    emp.load_wpop(s)
+    emp.load_wle(s)
     s.run()
     s2 = load_unmodified(scenario)
-    load_wpop(s2)
-    load_wle(s2)
+    emp.load_wpop(s2)
+    emp.load_wle(s2)
     s2.run()
     t = s.nodes["time"]
     interval=(2000,2025)
@@ -120,18 +120,16 @@ def compare_bau():
     s.run()
     s2 = load_unmodified(1)
     s2.run()
-    load_wcbr(s)
-    load_wcbr(s2)
     sd.plot_nodes(s, s2, nodes=sow_nodes, title="BAU2 (and BAU)")
 
 def crude_rates(scenario):
     s = load(scenario)
-    load_wcbr(s)
-    load_wcdr(s)
+    emp.load_wcbr(s)
+    emp.load_wcdr(s)
     s.run()
     s2 = load_unmodified(scenario)
-    load_wcbr(s2)
-    load_wcdr(s2)
+    emp.load_wcbr(s2)
+    emp.load_wcdr(s2)
     s2.run()
     print(f"Normalized Root Mean Square Error (or Difference)")
     nrmse = sd.nrmse_snodes(s2, 'wcbr', 'cbr')
@@ -145,6 +143,20 @@ def crude_rates(scenario):
     nodes=[("cbr",(0,50)), ("cdr", (0,50)), ("wcbr",(0,50)), ("wcdr",(0,50))]
     sd.plot_nodes(s, s2, nodes=nodes, title=stitle[scenario-1])
 
+def recalibrate_hef(scenario):
+    s = load(scenario)
+    emp.load_whef(s)
+    w3mod.recalibrate_hef(s)
+    s.run()
+    s2 = load_unmodified(scenario)
+    emp.load_whef(s2)
+    w3mod.recalibrate_hef(s2)
+    s2.run()
+    nodes=[
+        ("hef",(0,25e9)), ("algha",(0,25e9)), ("whef",(0,25e9)),
+        ("walg",(0,25e9))]
+    sd.plot_nodes(s, s2, nodes=nodes, title=stitle[scenario-1])
+    
 # Run a function
 import sys
 if __name__ == "__main__":
@@ -158,3 +170,4 @@ if __name__ == "__main__":
     #compare_welfare(n)
     #compare_bau()
     #crude_rates(n)
+    #recalibrate_hef(n)
