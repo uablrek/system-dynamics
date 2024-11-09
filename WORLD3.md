@@ -54,7 +54,7 @@ example (BAU dashed):
 <img src="figures/plot_bau2.svg" />
 
 
-## Recalibration of limits to growth: An update of the World3 model
+## Recalibration of limits to growth
 
 To recalibrate the model was what got me started with this project.  I
 read the [An update of the World3 model](
@@ -62,11 +62,23 @@ https://onlinelibrary.wiley.com/doi/full/10.1111/jiec.13442) but the
 result does not seem right. The pollution in "recalibration23" is
 *way* lower than BAU. If that was right we could continue to burn
 fossile fuels without worries, it's only shortage of resources that is
-the problem.
+the problem. I was also curious on *why* some values needed so large
+calibrations. In the case of `alic1` (a wopping 662.15% change), the
+answer is simple: it's a mistake. The default is not `2`, it's `14`.
+The NRMSD equation (2) is incorrect (but I assume the computations are
+ok), ...(more?)
 
-I was also curious on *why* some values needed so large
-calibration. In the case of `alic1` (a wopping 662.15% change), the
-answer is simple: it's a bug. The default is not `2`, it's `14`.
+Most important is that the [An update of the World3 model](
+https://onlinelibrary.wiley.com/doi/full/10.1111/jiec.13442)
+recalibration only alters a sub-set of initial constants. The 2003
+recalibration, on the other hand, altered initial constants *and the
+model* (but not by much). I think a 2024 recalibration also must alter
+the model.
+
+I would *really* like to get the empirical data though. From the
+recalibration, or from the [comparison](
+https://mahb.stanford.edu/wp-content/uploads/2021/07/yale-publication-1.pdf)
+by Gaya Herrington, in CSV or some readable form.
 
 
 
@@ -84,9 +96,9 @@ animates resources from 1T to 2T.
 
 <img src="figures/plot_pop1.svg" />
 
-This compares to the BAU2 estimates to empirical demographical
-data. It was surprisingly hard to get consistent data, especially
-before 1950. Here are the sources used:
+This compares BAU2 estimates to empirical data. It was surprisingly
+hard to get consistent data, especially before 1950. Here are the
+sources used:
 
 * https://data.worldbank.org/indicator/SP.POP.TOTL (1960-2023)
 * https://sv.wikipedia.org/wiki/V%C3%A4rldens_befolkning (<1960)
@@ -98,13 +110,13 @@ https://en.wikipedia.org/wiki/Great_Leap_Forward) in 1960,
 and by `Covid-19`. The leap in simulation LE is a sudden change in
 "Lifetime Multiplier from Health Services" in 1940.
 
-The population in the world rises faster than in the model, and life
-expectancy is much higher in the model in recent years.  The life
-expectancy (LE) at 1900 is 32 years, but is 28 years in the model
-(LEN). It is possible that the estimate *was* 28 years when `world3`
-was created. I don't like the LE leap in the model at 1940. It seems
-like a "fix" to get the population plot to match up to 1970 (which it
-does perfectly). There is no such leap IRL.
+The population in the world rises faster than in the model in recent
+years (8.2billion 2024), and life expectancy is much higher in the
+model in recent years.  The life expectancy (LE) at 1900 is 32 years,
+but is 28 years in the model (LEN). It is possible that the estimate
+*was* 28 years when `world3` was created. I don't like the LE leap in
+the model at 1940. It seems like a "fix" to get the population plot to
+match up to 1970 (which it does perfectly). There is no such leap IRL.
 
 ### Implementation
 
@@ -148,7 +160,7 @@ fixed values for Births and Life expectancy, and run the population
 system model until the poulation becomes stable. For 1000 births/year
 and le=70, the total population should stabilize at 70000 people.
 
-<img src="figures/pop-system-plot-70.svg" />
+<img src="figures/pop-system-plot-70.svg" width="50%" />
 
 However, it stabilizes at ~74000. Here is a plot that shows simulated
 `le` compared to expected (dashed):
@@ -201,14 +213,15 @@ comparison for crude birth/death rates:
 
 ## Human Ecological Footprint
 
+*It is important to know that HEF and HWI are derived variables. How we
+choose to compute them doesn't affect the model at all.*
+
 The Human Ecological Footprint (HEF) was obviously computed in a
 different way in 2003 when the variable was introduced in `world3-03`.
 If we assume that the authors calibrated the model to empirical data
 at the time, the HEF at 2003 was ~2Ggha (Giga global ha), but the
 [empirical value](https://data.footprintnetwork.org/#/countryTrends?cn=5001&type=BCtot,EFCtot)
-is ~16Ggha! It is important to know that HEF and HWI are derived
-variables. How we choose to compute them doesn't affect the model at
-all.
+for 2003 is ~16Ggha!
 
 My first mistake was to assume that the model computed HEF/capita. It
 doesn't. I was fooled by the low values, 0-4, but values are in Ggha
@@ -221,10 +234,8 @@ $$ hef = \frac{L_{Arable} + L_{Urban} + L_{Absorption}}{1.91} $$
 data the closest is [Carbon](https://data.footprintnetwork.org/#/abouttheData),
 which is used for "Absorbtion Land".
 
-
-We want to
-test the model, so we re-calibrate the HEF to align with the 2003
-value (~16Ggha), and check the match before and after 2003:
+We want to test the model, so we re-calibrate the HEF to align with
+the 2003 value (~16Ggha), and check the match before and after 2003:
 
 <img src="figures/hef_pop2.svg" />
 
