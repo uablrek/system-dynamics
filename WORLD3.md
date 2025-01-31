@@ -54,6 +54,39 @@ example (BAU dashed):
 <img src="figures/plot_bau2.svg" />
 
 
+## Run the model
+
+Use the `world3.py` script:
+
+```
+./world3.py                          # Help printout
+# Or: python world3.py
+./world3.py -s 6 run                 # Run the "CT" scenario
+./world3.py mods                     # Print modification help
+./world3.py -s 2 -m le,modify_m run  # Modified life expectancy on BAU2
+```
+
+To run [PyWorld3-03](https://github.com/TimSchell98/PyWorld3-03) you
+must clone it and include it in your `PYTHONPATH`:
+
+```
+export GITHUBD=$HOME/go/src/github.com
+export PYTHONPATH=$GITHUBD/TimSchell98/PyWorld3-03
+./world3.py pyworld3 --recal23
+./world3.py -s 2 pyworld3 --recal23     # Weird result
+```
+
+The update of `PyWorld3-03` to the 2003 version is not correct as noted in
+[this comment](https://github.com/TimSchell98/PyWorld3-03/blob/c19b495f10156e965c27561b4701d362b49f182a/run_different_standard_configurations.py#L17C1-L17C162):
+
+> Disclaimer: Szenario 2 and 3 do not match the szenarios of "Limits
+> to Growth: The 30-year update", because some parameters were changed
+> wich are not descriped.
+
+So running the `recal23` mod with other scenarios gives weird results.
+
+
+
 ## Recalibration of limits to growth
 
 To recalibrate the model was what got me started with this project.  I
@@ -105,7 +138,7 @@ sources used:
 * https://ourworldindata.org/life-expectancy
 * https://www.statista.com/statistics/805060/life-expectancy-at-birth-worldwide
 
-The bumps in empirical LE is caused by [China's Great Leap Forward](
+The dents in empirical LE is caused by [China's Great Leap Forward](
 https://en.wikipedia.org/wiki/Great_Leap_Forward) in 1960,
 and by `Covid-19`. The leap in simulation LE is a sudden change in
 "Lifetime Multiplier from Health Services" in 1940.
