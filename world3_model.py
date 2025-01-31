@@ -43,6 +43,7 @@
 
 import copy
 from system_dynamic import C, CT
+import system_dynamic as sd
 from math import log
 
 NEVER = 4000 # the year 4000
@@ -777,60 +778,63 @@ def load(world3, scenario=1, version=2003):
         TDD = world3.addConstant("TDD", C, val=20)
 
     # LYMC values depend on the version used
-    if version == 1972:
-        LYMC = world3.addConstant("LYMC", CT, val=([0, 1],
-                                             [40, 3],
-                                             [80, 3.8],
-                                             [120, 4.4],
-                                             [160, 4.9],
-                                             [200, 5.4],
-                                             [240, 5.7],
-                                             [280, 6],
-                                             [320, 6.3],
-                                             [360, 6.6],
-                                             [400, 6.9],
-                                             [440, 7.2],
-                                             [480, 7.4],
-                                             [520, 7.6],
-                                             [560, 7.8],
-                                             [600, 8],
-                                             [640, 8.2],
-                                             [680, 8.4],
-                                             [720, 8.6],
-                                             [760, 8.8],
-                                             [800, 9],
-                                             [840, 9.2],
-                                             [880, 9.4],
-                                             [920, 9.6],
-                                             [960, 9.8],
-                                             [1000, 10]))
+    LYMC = world3.addConstant(
+        "LYMC", CT, val=(
+            [0, 1],
+            [40, 3],
+            [80, 3.8],
+            [120, 4.4],
+            [160, 4.9],
+            [200, 5.4],
+            [240, 5.7],
+            [280, 6],
+            [320, 6.3],
+            [360, 6.6],
+            [400, 6.9],
+            [440, 7.2],
+            [480, 7.4],
+            [520, 7.6],
+            [560, 7.8],
+            [600, 8],
+            [640, 8.2],
+            [680, 8.4],
+            [720, 8.6],
+            [760, 8.8],
+            [800, 9],
+            [840, 9.2],
+            [880, 9.4],
+            [920, 9.6],
+            [960, 9.8],
+            [1000, 10]),
+        detail="Land Yield Change Multiplier", unit="f(aiph)")
     if version == 2003:
-        LYMC = world3.addConstant("LYMC", CT, val=([0, 1],
-                                             [40, 3],
-                                             [80, 4.5],
-                                             [120, 5],
-                                             [160, 5.3],
-                                             [200, 5.6],
-                                             [240, 5.9],
-                                             [280, 6.1],
-                                             [320, 6.35],
-                                             [360, 6.6],
-                                             [400, 6.9],
-                                             [440, 7.2],
-                                             [480, 7.4],
-                                             [520, 7.6],
-                                             [560, 7.8],
-                                             [600, 8],
-                                             [640, 8.2],
-                                             [680, 8.4],
-                                             [720, 8.6],
-                                             [760, 8.8],
-                                             [800, 9],
-                                             [840, 9.2],
-                                             [880, 9.4],
-                                             [920, 9.6],
-                                             [960, 9.8],
-                                             [1000, 10]))
+        LYMC.val=(
+            [0, 1],
+            [40, 3],
+            [80, 4.5],
+            [120, 5],
+            [160, 5.3],
+            [200, 5.6],
+            [240, 5.9],
+            [280, 6.1],
+            [320, 6.35],
+            [360, 6.6],
+            [400, 6.9],
+            [440, 7.2],
+            [480, 7.4],
+            [520, 7.6],
+            [560, 7.8],
+            [600, 8],
+            [640, 8.2],
+            [680, 8.4],
+            [720, 8.6],
+            [760, 8.8],
+            [800, 9],
+            [840, 9.2],
+            [880, 9.4],
+            [920, 9.6],
+            [960, 9.8],
+            [1000, 10])
 
     LYMAP1 = world3.addConstant("LYMAP1", CT, val=([0, 1],
                                              [10, 1],
@@ -882,13 +886,16 @@ def load(world3, scenario=1, version=2003):
     mlymc = world3.addFlow("mlymc")
 
     cai = world3.addFlow("cai")
-    ai = world3.addStock("ai", val=AII.val)
-    alai = world3.addFlow("alai")
-    aiph = world3.addFlow("aiph")
-    ly = world3.addFlow("ly")
-    lyf = world3.addFlow("lyf")
+    ai = world3.addStock("ai", val=AII.val, detail="Agricultural Inputs")
+    alai = world3.addFlow(
+        "alai", detail="Average Lifetime of Agricultural Inputs")
+    aiph = world3.addFlow(
+        "aiph", detail="Agricultural Inputs Per Hectare")
+    ly = world3.addFlow("ly", detail="Land Yield")
+    lyf = world3.addFlow("lyf", detail="Land Yield Factor")
 
-    # lyf2 values depend on the version used (is a NodeConstant if version is 1972)
+    # lyf2 values depend on the version used (is a NodeConstant if
+    # version is 1972)
     if version == 2003:
         lyf2 = world3.addDelay3("lyf2")
 
@@ -1182,7 +1189,8 @@ def load(world3, scenario=1, version=2003):
     world3.default_cat = POLLUTION
     PPGF1 = world3.addConstant("PPGF1", C, val=1)
 
-    # PPGF2 values depend on the version used (is a NodeDelay3 if version is 2003)
+    # PPGF2 values depend on the version used (is a NodeDelay3 if
+    # version is 2003)
     if version == 1972:
         PPGF2 = world3.addConstant("PPGF2", C, val=1)
 
@@ -1215,20 +1223,25 @@ def load(world3, scenario=1, version=2003):
         else :
             POLGFM = world3.addConstant("POLGFM", CT, val=([-1, 0],
                                                      [0, 0]))
-        COPM = world3.addConstant("COPM", CT, val=([0, 1.25],
-                                             [0.1, 1.2],
-                                             [0.2, 1.15],
-                                             [0.3, 1.11],
-                                             [0.4, 1.08],
-                                             [0.5, 1.05],
-                                             [0.6, 1.03],
-                                             [0.7, 1.02],
-                                             [0.8, 1.01],
-                                             [0.9, 1],
-                                             [1, 1]))
+        COPM = world3.addConstant(
+            "COPM", CT, val=(
+                [0, 1.25],
+                [0.1, 1.2],
+                [0.2, 1.15],
+                [0.3, 1.11],
+                [0.4, 1.08],
+                [0.5, 1.05],
+                [0.6, 1.03],
+                [0.7, 1.02],
+                [0.8, 1.01],
+                [0.9, 1],
+                [1, 1]),
+            detail="Capital Output Pollution Multiplier", unit="f(ppgf)")
 
-        polgfm = world3.addFlow("polgfm")
-        copm = world3.addFlow("copm")
+        polgfm = world3.addFlow(
+            "polgfm", detail="Pollution Control Technology Change Multiplier")
+        copm = world3.addFlow(
+            "copm", detail="Capital Output Pollution Multiplier")
 
     ahlm = world3.addFlow("ahlm")
     ppgr = world3.addFlow("ppgr", detail="Persistent Pollution Generation Rate")
@@ -1239,18 +1252,26 @@ def load(world3, scenario=1, version=2003):
     if version == 2003:
         ppgf2 = world3.addDelay3("ppgf2")
 
-    ppgio = world3.addFlow("ppgio")
-    ppgao = world3.addFlow("ppgao")
-    ppapr = world3.addDelay3("ppapr")
-    ppol = world3.addStock("ppol", val=PPOLI.val)
-    ppolx = world3.addFlow("ppolx", detail="Persistent Pollution", unit="index")
-    ppasr = world3.addFlow("ppasr")
-    ahl = world3.addFlow("ahl")
+    ppgio = world3.addFlow(
+        "ppgio", detail="Persistent Pollution Generated by Industrial Output")
+    ppgao = world3.addFlow(
+        "ppgao", detail="Persistent Pollution Generated by Agricultural Output")
+    ppapr = world3.addDelay3(
+        "ppapr", detail="Persistent Pollution Appearance Rate")
+    ppol = world3.addStock(
+        "ppol", val=PPOLI.val, detail="Persistent Pollution")
+    ppolx = world3.addFlow(
+        "ppolx", detail="Persistent Pollution Index")
+    ppasr = world3.addFlow(
+        "ppasr", detail="Persistent Pollution Assimilation Rate")
+    ahl = world3.addFlow("ahl", detail="Assimilation Half-Life")
 
     # ptd and ptdr values depend on the version used (not used in 1972)
     if version == 2003:
-        ptd = world3.addStock("ptd", val=PPGF1.val)
-        ptdr = world3.addFlow("ptdr")
+        ptd = world3.addStock(
+            "ptd", val=PPGF1.val, detail="Pollution Technology Development")
+        ptdr = world3.addFlow(
+            "ptdr", detail="Pollution Technology Development Rate")
 
 
     ###########
@@ -1767,3 +1788,26 @@ def load(world3, scenario=1, version=2003):
     world3.add_equation(f_algha, algha, [ppgr, HUP, GHAH])
     world3.add_equation(nodes_div, alggha, [al, GHAH])
     world3.add_equation(nodes_div, ulgha, [uil, GHAH])
+
+# Re-initiate stocks after contant updates (e.g. recalibration23)
+def reinit_stocks(w):
+    stocks = w.stocks
+    for s in w.stocks:
+        c = s.name.upper() + "I"
+        if c in w.nodes:
+            s.hist[0] = w.nodes[c].val 
+        else:
+            if s.name == "time":
+                continue
+            if s.name == "lytd":
+                c = "LYF1"
+            if s.name == "nrtd":
+                c = "NRUFI"
+            if s.name == "ptd":
+                c = "PPGF1"
+            if c in w.nodes:
+                s.hist[0] = w.nodes[c].val
+            else:
+                print("Missing constant: ", c)
+
+

@@ -238,5 +238,5 @@ if __name__ == "__main__":
     #read_M(s, file="data/M.json")
     #s.graphviz(title="Population")
     #simple_plot(s)
-    le_test(s)
-    #plot_age(s)
+    #le_test(s)
+    plot_age(s)
