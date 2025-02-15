@@ -204,9 +204,15 @@ class NodeDelay3(Node):
         self.I3 = None
 
     def eval(self, ts):
+        if not self.pred:
+            return              # allow orphan delay nodes
         # self.cons is (always?) f_delayinit(), which sets self.cons
         # and self.flow
         self.cons(*[p.val for p in self.pred])
+        # Handle zero-delay
+        if self.cst == 0:
+            self.val = self.flow
+            return
         dl = self.cst / 3
         RT1 = self.I1 / dl
         self.I1 = self.I1 + (self.flow - RT1) * ts
