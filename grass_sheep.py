@@ -1,7 +1,14 @@
 #! /usr/bin/python
 # SPDX-License-Identifier: Unlicense
 
+"""
+A *very* simple plant-herbivore model
+"""
+
+import sys
+import argparse
 import system_dynamic as sd
+dbg = lambda *arg: 0
 
 # The node names must be unique, so they may be prefixed with the
 # category
@@ -30,16 +37,16 @@ def cat_grass(s):
 
 # This is a simplified polulation model. If the birth rate is larger
 # than the death rate, the polulation will grow exponentially.
-def cat_sheep(s):
+def cat_sheep(s, br=0.5, dr=0.1):
     cat="sheep"
     s.default_cat = cat
     # Constants
     rbirth = s.addConstant(
         f'{cat}_birth_rate', sd.C, detail='Birth rate',
-        unit="n/year/sheep", val=0.5)
+        unit="n/year/sheep", val=br)
     rdeath = s.addConstant(
         f'{cat}_death_rate', sd.C, detail='Death rate',
-        unit="n/year/sheep", val=0.1)
+        unit="n/year/sheep", val=dr)
     # Stocks and Flows
     birth = s.addFlow("births", detail="Sheep born", unit="n/year")
     death = s.addFlow("deaths", detail="Sheep died", unit="n/year")
@@ -50,20 +57,25 @@ def cat_sheep(s):
     # (this will be modified to include starvation in the final model)
     s.add_equation(sd.f_sum, sheep, [birth, death])
 
-def load_model(s):
+def load_model(s, delay=0, br=0.5, dr=0.1):
     s.default_sign = 1
     cat_grass(s)
-    cat_sheep(s)
+    cat_sheep(s, br, dr)
     s.default_cat = None
     # Connect the grass and sheep categories (sub-systems)
     # Constants
     eats = s.addConstant(
         'eats', sd.C, detail='How much a sheep eats', unit="kg/year", val=900)
+    D = s.addConstant(
+        'delay_constant', sd.C, detail='Delay constant',
+        unit="years", val=delay)    
     # Stocks and Flows
     graze = s.addFlow(
         "graze", detail="Grass grazed", unit="kg/year")
     starvation = s.addFlow(
         "starvation", detail="Sheep starving", unit="n")
+    dd = s.addDelay3(
+        'dd', detail="Delay for death by starvation", unit='n')
     # Equations (edges)
     # Really simplified, sheep that don't have food starves
     def f_starvation(grass, sheep, eat):
@@ -79,17 +91,70 @@ def load_model(s):
     s.add_equation(sd.f_mul, graze, [sheep, eats], sign=-1)
     s.add_equation(sd.f_sum, grass, [growth, graze])
     s.add_equation(f_starvation, starvation, [grass, sheep, eats], sign=-1)
-    s.add_equation(sd.f_sum, sheep, [birth, death, starvation])
+    s.add_equation(dd.f_delayinit, dd, [starvation, D], sign=-1)
+    s.add_equation(sd.f_sum, sheep, [birth, death, dd])
     grass.sign = -1 # (makes the model graph looks nicer, but have no impact)
 
-import sys
-if __name__ == "__main__":
-    s = sd.System(time_step=0.1, end_time=25)
-    load_model(s)
-    if len(sys.argv) > 1:
-        s.graphviz('grass+sheep')
-        sys.exit()
-    #s.trace("starvation")
+# ----------------------------------------------------------------------
+# Commands;
+
+def cmd_run(args):
+    """
+    Run the model and show a graph
+    """
+    parser = argparse.ArgumentParser(
+        prog="run", description=cmd_run.__doc__)
+    parser.add_argument('--ts', type=float, default=0.01, help="time-step")
+    parser.add_argument(
+        '--dd', type=float, default=0, help="Delay for starvation death")
+    parser.add_argument('--br', type=float, default=0.5, help="Birth rate")
+    parser.add_argument('--dr', type=float, default=0.1, help="Death rate")
+    args = parser.parse_args(args[1:])
+    s = sd.System(time_step=args.ts, end_time=25)
+    load_model(s, delay=args.dd, br=args.br, dr=args.dr)
     s.run()
     s.plot_stocks(title='Grass and Sheep', size=(8,4))
-    #s.plot(["grass", "starvation", "graze"])
+    return 0
+
+def cmd_graph(args):
+    """
+    Emit graphwiz data for the model
+    """
+    s = sd.System(time_step=1, end_time=25)
+    load_model(s)
+    s.graphviz('grass+sheep')
+    sys.exit()
+    return 0
+
+# ----------------------------------------------------------------------
+# Parse args
+
+def parse_args():
+    cmdfn = [n for n in globals() if n.startswith('cmd_')]
+    cmds = [x.removeprefix('cmd_') for x in cmdfn]
+
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('-v', action='count', default=0, help="verbose")
+    parser.add_argument('cmd', choices=cmds, nargs=argparse.REMAINDER)
+    conf = parser.parse_args()
+
+    global dbg
+    if conf.v:
+        dbg = getattr(__builtins__, 'print')
+    dbg("Program starting", conf, cmds)
+
+    # Why is this necessary? Bug?
+    if not conf.cmd:
+        parser.print_help()
+        sys.exit(0)
+    if conf.cmd[0] not in cmds:
+        print("Invalid command")
+        sys.exit(1)
+
+    cmd_function = globals()["cmd_" + conf.cmd[0]]
+    sys.exit(cmd_function(conf.cmd))
+    
+if __name__ == "__main__":
+    parse_args()

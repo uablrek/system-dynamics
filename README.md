@@ -41,7 +41,9 @@ Sheep Consume = 2.5 kg/day ~ 900 kg/year
 
 Run it (on Linux):
 ```
-./grass_sheep.py
+./grass_sheep.py             # Help printout
+./grass_sheep.py run -h      # Help for the "run" command
+./grass_sheep.py run
 # To generate the model graph:
 ./grass_sheep.py graph | dot -Tsvg > model.svg
 ```
@@ -49,10 +51,21 @@ You should see something like:
 
 <img src="figures/plot_grass+sheep.svg" />
 
-I was a bit surprised by the oscillations since that requires a
-delay. But the delay is "built-in". For instance `starvation` is
-computed from the *last* iteration of `grass`, so the number of sheep
-can overshoot.
+The delay for death by starvation (dd) has default 0 (zero). But even
+with zero delay there are oscillations. I think some delay is
+"built-in". For instance `starvation` is computed from the *last*
+iteration of `grass`, so the number of sheep can overshoot.
+
+The interresting part (IMHO) is what happens when you alter the delay
+for death by starvation (dd). With --dd=0.5 you get "lemming oscillations":
+
+<img src="figures/plot_grass+sheep_dd0.5.svg" />
+
+And with --dd=0.7, you get a [Seneca cliff](
+https://en.wikipedia.org/wiki/Seneca_effect):
+
+<img src="figures/plot_grass+sheep_dd0.7.svg" />
+
 
 ## NodeDelay3 and the pond model
 
