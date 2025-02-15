@@ -26,7 +26,6 @@ import argparse
 import json
 import numpy
 import matplotlib.pyplot as plt
-from pyworld3 import World3
 import system_dynamic as sd
 import world3_model as world3
 import le
@@ -93,6 +92,7 @@ def recal23_constants():
 # The "State of the World nodes" (sow) nodes are transfered to a
 # world3 model for plotting
 def pyworld3_run(recal23=False):
+    from pyworld3 import World3
     pyworld3 = World3(dt = conf.ts, pyear = 4000)
     if recal23:
         data = recal23_constants()
@@ -146,6 +146,7 @@ def modify_world3(s, mod):
             recal23(s)
         case _:
             print("Modification ignored: ", mod)
+
 def modify_help():
     print('''Comma separated list of:
     read_m - Read M from file
@@ -230,6 +231,19 @@ def cmd_run(args):
             s.plot(*wf_nodes, title=stitle[conf.scenario-1], formatter="")
             s.plot(*ef_nodes, title=stitle[conf.scenario-1], formatter="")
             
+def cmd_bau2(args):
+    """
+    Run BAU2 and BAU and compare
+    """
+    parser = argparse.ArgumentParser(prog="bau2", description=cmd_bau2.__doc__)
+    args = parser.parse_args(args[1:])
+    conf.scenario = 2
+    s = load_world3()
+    s.run()
+    conf.scenario = 1
+    s2 = load_world3()
+    s2.run()
+    sd.plot_nodes(s, s2, nodes=sow_nodes, title="BAU2 (BAU dashed)")
 
 def cmd_mods(args):
     modify_help()
