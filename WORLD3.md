@@ -85,7 +85,22 @@ The update of `PyWorld3-03` to the 2003 version is not correct as noted in
 
 So running the `recal23` mod with other scenarios gives weird results.
 
+## Model graph
 
+Model graphs can be generated to svg-files, or viewed directly:
+
+```
+./world3.py graph | dot -Tx11
+./world3.py graph | dot -Tsvg > model.svg
+./world3.py graph -c population | dot -Tsvg > population.svg
+```
+
+The [entire model graph](figures/world3-model.svg) is very complex,
+but some properties can be examined. To learn about the world3 model
+it may be better to examine graphs of one category at the time.
+
+Remember, if you view the raw svg-image in your browser (Chrome or
+Firefox), you can hoover over an item to get more info as a "tooltip".
 
 ## Recalibration of limits to growth
 
