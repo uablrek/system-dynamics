@@ -100,7 +100,7 @@ def load_model(s, delay=0, br=0.5, dr=0.1):
 
 def cmd_run(args):
     """
-    Run the model and show a graph
+    Run the model and show a plot
     """
     parser = argparse.ArgumentParser(
         prog="run", description=cmd_run.__doc__)
@@ -118,7 +118,7 @@ def cmd_run(args):
 
 def cmd_graph(args):
     """
-    Emit graphwiz data for the model
+    Emit graphviz data for the model
     """
     s = sd.System(time_step=1, end_time=25)
     load_model(s)
