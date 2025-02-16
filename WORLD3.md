@@ -97,7 +97,9 @@ Model graphs can be generated to svg-files, or viewed directly:
 
 The [entire model graph](figures/world3-model.svg) is very complex,
 but some properties can be examined. To learn about the world3 model
-it may be better to examine graphs of one category at the time.
+it is better to check "Annex 1" in the
+[PDF](https://github.com/Juji29/MyWorld3/blob/master/MyWorld3%20Equations%20and%20Explanations.pdf)
+and examine graphs of one category at the time.
 
 Remember, if you view the raw svg-image in your browser (Chrome or
 Firefox), you can hoover over an item to get more info as a "tooltip".

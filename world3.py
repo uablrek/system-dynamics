@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# SPDX-License-Identifier: Unlicense
 """
 Runs the world3 model. Example:
 
@@ -225,59 +226,6 @@ def emit_cat(s, nodes, cat):
             s.emit_node(n)
     print('}')
 
-# Show interconnections between categories.
-def emit_overview(s):
-    print(f'digraph "World3 - category overview" {{')
-    # It seem very hard to control the layout of the cluster/subgraphs
-    # in Graphviz. 
-    print("layout = fdp")       # (the "least bad", but still messy)
-    #print("layout = neato")
-    #print("newrank=true")
-    #print("rank=same")
-
-    # First collect all nodes with edges that originates or
-    # terminates outside the category. We must avoid duplicates
-    # so a set of node-names is used
-    nodes = set()
-    def excluded(n):
-        # Indexes are not really part of the model, but derived items
-        # e.g hef.
-        return type(n) == sd.NodeConstant or n.cat == world3.SYSTEM or n.cat == world3.INDEXES
-    for _,n in s.nodes.items():
-        if excluded(n):
-            continue
-        for x in n.succ:
-            if excluded(x):
-                continue
-            if n.cat == x.cat:
-                continue
-            nodes.add(n.name)
-        for x in n.pred:
-            if excluded(x):
-                continue
-            if n.cat == x.cat:
-                continue
-            nodes.add(n.name)
-    # Create sub-graphs for categories
-    for c in s.categories():
-        if c == world3.INDEXES:
-            continue
-        emit_cat(s, nodes, cat=c)
-    for nn in nodes:
-        n = s.nodes[nn]
-        for x in n.succ:
-            if excluded(x):
-                continue
-            if x.cat == n.cat:
-                continue        # internal edge
-            if x.name not in nodes:
-                # This shoudn't happen. We have sorted out all nodes
-                # with intra-category edges
-                print("Martian node", x.name, file=sys.stderr)
-                continue
-            print(f'{n.name} -> {x.name}')
-    print('}')
-
 # ----------------------------------------------------------------------
 # Commands;
 
@@ -375,23 +323,17 @@ def cmd_graph(args):
     """
     Emit a world3 graphviz model graph. Pipe output through
     "| dot -Tsvg > model.svg" or "| dot -Tx11"
-    The entire graph very complex. For learning, emit categories instead
-    and the overview (messy).
+    The entire graph very complex. For learning, emit categories instead.
     """
     parser = argparse.ArgumentParser(
         prog="graph", description=cmd_graph.__doc__)
     parser.add_argument(
         '-c', '--category', default="", help="Category and it's input nodes")
-    parser.add_argument(
-        "--overview", action='store_true', help="Category overview")
     args = parser.parse_args(args[1:])
     s = sd.System(init_time=1900, end_time=2100, time_step=1)
     world3.load(s)
     if args.category:
         emit_category(s, args.category)
-        return
-    if args.overview:
-        emit_overview(s)
         return
     s.graphviz(title="World3")
 
