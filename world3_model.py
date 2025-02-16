@@ -128,6 +128,7 @@ POPULATION = 'population'
 CAPITAL = "capital"
 RESOURCES = "resources"
 POLLUTION = "pollution"
+INDEXES = "indexes"
 
 ######################
 # Initial conditions #
@@ -1277,7 +1278,7 @@ def load(world3, scenario=1, version=2003):
     ###########
     # Indexes #
     ###########
-    world3.default_cat = None
+    world3.default_cat = INDEXES
 
     POF = world3.addConstant("POF", C, val=0.22)
     HUP = world3.addConstant(
