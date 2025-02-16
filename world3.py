@@ -210,6 +210,7 @@ def emit_category(s, cat):
                 continue
             if x.cat == "indexes":
                 print("Input from index node", x.name, file=sys.stderr)
+            s.emit_node(x, emit_category=True)
             print(f'{x.name} -> {n.name}')
     
     print('}')

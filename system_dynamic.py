@@ -480,7 +480,7 @@ class System:
             l, title=title, size=size, pause=pause, formatter=formatter)
 
     # Generate model graph
-    def emit_node(self, n):
+    def emit_node(self, n, emit_category=False):
         if type(n) == NodeStock:
             shape="box"
         elif type(n) == NodeFlow:
@@ -489,11 +489,16 @@ class System:
             shape="Mcircle"
         else:
             return
-        print(f'{n.name} [shape={shape} label={n.name} tooltip="{n.detail} ({n.unit})"]')
+        detail = n.detail if n.detail else n.name
+        unit = f"({n.unit})" if n.unit else ""
+        cat = f"({n.cat})" if emit_category else ""
+        print(f'{n.name} [shape={shape} label={n.name} tooltip="{detail} {unit} {cat}"]')
         c = ""
         for s in n.pred:
             if type(s) == NodeConstant:
-                c += f'{s.detail} = {s.val} {s.unit}\\n'
+                detail = s.detail if s.detail else s.name
+                unit = f"({s.unit})" if s.unit else ""
+                c += f'{detail} = {s.val} {unit}\\n'
         if c != "":
             print(f'{n.name}_c [shape=plain label="const" tooltip="{c}"]')
             print(f'{n.name}_c -> {n.name} [arrowhead=none]')
