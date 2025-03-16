@@ -33,8 +33,8 @@ def load_model(s):
         return 0
     t = s.nodes['time']
     s.add_equation(f_gate, gate, [F, t])
-    s.add_equation(stream.f_delayinit, stream, [gate, D])
-    s.add_equation(sd.f_sum, pond, [stream])
+    s.add_equation(stream.f_delayinit, stream, [gate, D], ['+',''])
+    s.add_equation(sd.f_sum, pond, [stream], ['+'])
 
 import sys    
 if __name__ == "__main__":

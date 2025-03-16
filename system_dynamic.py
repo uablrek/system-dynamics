@@ -77,6 +77,12 @@ class Node:
         self.rank = None  # Sort order on evaluation (computed in set_rank())
         self.trace = False
         self.save = True
+        # edge_labels must be a list of strings with the lenght equal
+        # to the number of predecessors, which is set by the
+        # set_cons() method.  It's only used when generating a system
+        # graph, and the main purpose is to define '+' or '-' for
+        # feedback loops
+        self.edge_labels = None
 
     def __repr__(self):
         value = "None"
@@ -92,9 +98,10 @@ class Node:
         if self.unit: d['unit'] = self.unit
         return d
 
-    def set_cons(self, f, pred):
+    def set_cons(self, f, pred, edge_labels=None):
         self.cons = f
         self.pred = pred
+        self.edge_labels = edge_labels
         for p in pred:
             p.succ.add(self)
 
@@ -327,8 +334,8 @@ class System:
         self.add_node(c)
         return c
 
-    def add_equation(self, f, x_target, x_s):
-        x_target.set_cons(f, x_s)
+    def add_equation(self, f, x_target, x_s, edge_labels=None):
+        x_target.set_cons(f, x_s, edge_labels)
 
     def eval(self, ts):
         for ns in self.nodesrank:
@@ -516,8 +523,16 @@ class System:
                 continue
             if n.cat in exclude:
                 continue
-            for s in n.get_succ_name():
-                print(f'{n.name} -> {s}')
+            if n.edge_labels:
+                for p,e in zip(n.pred, n.edge_labels):
+                    if type(p) == NodeConstant:
+                        continue
+                    print(f'{p.name} -> {n.name} [label="{e}"]')
+            else:
+                for p in n.pred:
+                    if type(p) == NodeConstant:
+                        continue
+                    print(f"{p.name} -> {n.name}")
         print('}')
 
     def categories(self, exclude=['SYSTEM']):
