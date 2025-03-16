@@ -163,10 +163,11 @@ class NodeFlow(Node):
         self.hist = []
 
     def eval(self, dt):
-        val = self.cons(*[p.val for p in self.pred])
-        if val == None:
-            self.hist.append(val)
-            return
+        if not self.pred:
+            # Allow orphan nodes
+            val = 0
+        else:
+            val = self.cons(*[p.val for p in self.pred])
         x = 1 if self.sign >= 0 else -1
         self.val = val * x
         if self.save:
