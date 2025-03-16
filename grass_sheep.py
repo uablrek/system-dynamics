@@ -33,7 +33,7 @@ def cat_grass(s):
     # Equations (edges)
     s.add_equation(sd.f_mul, growth, [area, rate])
     # (this will be modified to include grazing in the final model)
-    s.add_equation(sd.f_sum, grass, [growth])
+    s.add_equation(sd.f_sum, grass, [growth], ['+'])
 
 # This is a simplified polulation model. If the birth rate is larger
 # than the death rate, the polulation will grow exponentially.
@@ -57,7 +57,7 @@ def cat_sheep(s, br=0.5, dr=0.1):
     # (this will be modified to include starvation in the final model)
     def f_sheep(birth, death):
         return birth - death
-    s.add_equation(f_sheep, sheep, [birth, death])
+    s.add_equation(f_sheep, sheep, [birth, death], ['+', '-'])
 
 def load_model(s, delay=0, br=0.5, dr=0.1):
     cat_grass(s)
@@ -90,12 +90,12 @@ def load_model(s, delay=0, br=0.5, dr=0.1):
     birth = s.nodes["births"]
     death = s.nodes["deaths"]
     s.add_equation(sd.f_mul, graze, [sheep, eats])
-    s.add_equation(sd.f_minus, grass, [growth, graze])
-    s.add_equation(f_starvation, starvation, [grass, sheep, eats])
+    s.add_equation(sd.f_minus, grass, [growth, graze], ['+', '-'])
+    s.add_equation(f_starvation, starvation, [grass, sheep, eats], ['-','+',''])
     s.add_equation(dd.f_delayinit, dd, [starvation, D])
     def f_sheep(birth, death, starvation):
         return birth - death - starvation
-    s.add_equation(f_sheep, sheep, [birth, death, dd])
+    s.add_equation(f_sheep, sheep, [birth, death, dd], ['+','-','-'])
 
 # ----------------------------------------------------------------------
 # Commands;
