@@ -53,12 +53,13 @@ def cat_sheep(s, br=0.5, dr=0.1):
     sheep = s.addStock("sheep", detail='Number of sheep', unit="n", val=100)
     # Equations (edges)
     s.add_equation(sd.f_mul, birth, [sheep, rbirth])
-    s.add_equation(sd.f_mul, death, [sheep, rdeath], sign=-1)
+    s.add_equation(sd.f_mul, death, [sheep, rdeath])
     # (this will be modified to include starvation in the final model)
-    s.add_equation(sd.f_sum, sheep, [birth, death])
+    def f_sheep(birth, death):
+        return birth - death
+    s.add_equation(f_sheep, sheep, [birth, death])
 
 def load_model(s, delay=0, br=0.5, dr=0.1):
-    s.default_sign = 1
     cat_grass(s)
     cat_sheep(s, br, dr)
     s.default_cat = None
@@ -88,12 +89,13 @@ def load_model(s, delay=0, br=0.5, dr=0.1):
     growth = s.nodes["growth"]
     birth = s.nodes["births"]
     death = s.nodes["deaths"]
-    s.add_equation(sd.f_mul, graze, [sheep, eats], sign=-1)
-    s.add_equation(sd.f_sum, grass, [growth, graze])
-    s.add_equation(f_starvation, starvation, [grass, sheep, eats], sign=-1)
-    s.add_equation(dd.f_delayinit, dd, [starvation, D], sign=-1)
-    s.add_equation(sd.f_sum, sheep, [birth, death, dd])
-    grass.sign = -1 # (makes the model graph looks nicer, but have no impact)
+    s.add_equation(sd.f_mul, graze, [sheep, eats])
+    s.add_equation(sd.f_minus, grass, [growth, graze])
+    s.add_equation(f_starvation, starvation, [grass, sheep, eats])
+    s.add_equation(dd.f_delayinit, dd, [starvation, D])
+    def f_sheep(birth, death, starvation):
+        return birth - death - starvation
+    s.add_equation(f_sheep, sheep, [birth, death, dd])
 
 # ----------------------------------------------------------------------
 # Commands;

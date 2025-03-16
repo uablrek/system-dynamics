@@ -43,7 +43,6 @@
 # - Rename class World3->System and simplify
 # - Plot and graph functions
 # - Boundaries (max, min) in stocks
-# - A "sign" used to set +,- on edges (and more) (issue #1)
 # - Primitive trace
 # - An automatic 'time' stock
 # - Attempt to follow Python style (https://peps.python.org/pep-0008/)
@@ -73,7 +72,6 @@ class Node:
         self.cat = cat
         self.unit = unit
         self.cons = None  # function to get val. arguments are predecessors
-        self.sign = 0     # -1 if this node gives negative feedback ('-')
         self.pred = set()
         self.succ = set()
         self.rank = None  # Sort order on evaluation (computed in set_rank())
@@ -94,10 +92,9 @@ class Node:
         if self.unit: d['unit'] = self.unit
         return d
 
-    def set_cons(self, f, pred, sign=0):
+    def set_cons(self, f, pred):
         self.cons = f
         self.pred = pred
-        self.sign = sign
         for p in pred:
             p.succ.add(self)
 
@@ -154,8 +151,6 @@ class NodeStock(Node):
 # NodeFlow is a node which is computed each time.
 # It also has a historic in order to be able to show its evolution.
 #############################################################################
-# The 'sign' indicate if this is a negative '-', or positive '+' flow
-# sign=0 have no effect on the model or the model graph
 
 class NodeFlow(Node):
     def __init__(self, name, detail=None, unit=None, cat=None):
@@ -165,13 +160,11 @@ class NodeFlow(Node):
     def eval(self, dt):
         if not self.pred:
             # Allow orphan nodes
-            val = 0
+            self.val = 0
         else:
-            val = self.cons(*[p.val for p in self.pred])
-        x = 1 if self.sign >= 0 else -1
-        self.val = val * x
+            self.val = self.cons(*[p.val for p in self.pred])
         if self.save:
-            self.hist.append(self.val * x) # (saved values should be positive)
+            self.hist.append(self.val)
         if self.trace:
             print(f'{self.name}: {self.val}')
 
@@ -289,13 +282,12 @@ class System:
             "TS", C, val=time_step, detail="time step", cat='SYSTEM')
         t = NodeStock(
             "time", val=init_time, detail="time", unit=time_unit, cat='SYSTEM')
-        self.add_equation(lambda x: 1, t, [TS], sign=0)
+        self.add_equation(lambda x: 1, t, [TS])
         self.nodes = {'TS':TS, 'time':t}
         self.stocks = [t]
         self.time_unit=time_unit
         self.end_time = end_time
         self.default_cat = None
-        self.default_sign = 0
 
     def __repr__(self):
         return "\n".join([str(v) for c,v in self.nodes.items()])
@@ -335,9 +327,8 @@ class System:
         self.add_node(c)
         return c
 
-    def add_equation(self, f, x_target, x_s, sign=None):
-        if sign == None: sign = self.default_sign
-        x_target.set_cons(f, x_s, sign)
+    def add_equation(self, f, x_target, x_s):
+        x_target.set_cons(f, x_s)
 
     def eval(self, ts):
         for ns in self.nodesrank:
@@ -526,11 +517,7 @@ class System:
             if n.cat in exclude:
                 continue
             for s in n.get_succ_name():
-                if n.sign == 0:
-                    print(f'{n.name} -> {s}')
-                else:
-                    l = '+' if n.sign > 0 else '-'
-                    print(f'{n.name} -> {s} [label="{l}"]')
+                print(f'{n.name} -> {s}')
         print('}')
 
     def categories(self, exclude=['SYSTEM']):
@@ -721,6 +708,8 @@ def f_sum(*l):
     return sum([float(i) for i in l])
 def f_mul(val, rate):
     return val * rate
+def f_minus(original, term):
+    return original - term
 def f_clip(c1, c2, ts, t):
     if t <= ts : return c1
     else : return c2
