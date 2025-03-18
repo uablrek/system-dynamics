@@ -16,6 +16,22 @@ model graphs are added. The model graphs are generated with
 [graphviz](https://graphviz.org/).
 
 
+## Lotka–Volterra predator–prey model
+
+The [Lotka–Volterra predator–prey model](
+https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations) is
+simple and a good example. Run with:
+```
+./predator_prey.py -h      # help
+./predator_prey.py run -h  # help for the "run" command
+./predator_prey.py run
+```
+By default parameters for "A simple example" from the [wiki page](
+https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations) is used:
+
+<img src="figures/plot_predator_prey.svg" />
+
+
 ## The grass+sheep model
 
 <img src="figures/grass+sheep.svg" />
