@@ -51,6 +51,7 @@
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter
+import math
 
 C = "CONSTANT"
 CT = "TABLE OF CONSTANTS"
@@ -404,7 +405,6 @@ class System:
                 return rank_rec(Sk1, k+1)
 
         rank_rec(S0, 0)
-        self.nbrank = max(r) + 1
         self.nodesrank = [
             self.nodes[d2[j]] for _, j in sorted([(ri, i) for i, ri in enumerate(r)])]
         self.nodesrank += self.stocks
@@ -721,8 +721,8 @@ def nrmse_snodes(s, empiric, model, interval=None):
 # Common functions used in equations
 def f_sum(*l):
     return sum([float(i) for i in l])
-def f_mul(val, rate):
-    return val * rate
+def f_mul(*l):
+    return math.prod([float(i) for i in l])
 def f_minus(original, term):
     return original - term
 def f_clip(c1, c2, ts, t):
