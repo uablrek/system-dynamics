@@ -68,7 +68,6 @@ def cmd_run(args):
     parser.add_argument(
         '--i', default="10,10", help="initial values: prey,predator")
     args = parser.parse_args(args[1:])
-    c = [float(i) for i in args.c.split(',')]
     s = sd.System(time_step=args.ts, end_time=100, time_unit="time")
     load_model(s, csl2float(args.c, 4), csl2float(args.i, 2))
     s.run()
