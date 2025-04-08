@@ -20,7 +20,7 @@ model graphs are added. The model graphs are generated with
 
 The [Lotka–Volterra predator–prey model](
 https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations) is
-simple and a good example. Run with:
+simple and a good example ([graph](figures/predator_prey.svg)). Run with:
 ```
 ./predator_prey.py -h      # help
 ./predator_prey.py run -h  # help for the "run" command
