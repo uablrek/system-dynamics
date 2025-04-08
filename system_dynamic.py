@@ -499,8 +499,8 @@ class System:
                 unit = f"({s.unit})" if s.unit else ""
                 c += f'{detail} = {s.val} {unit}\\n'
         if c != "":
-            print(f'{n.name}_c [shape=plain label="const" tooltip="{c}"]')
-            print(f'{n.name}_c -> {n.name} [arrowhead=none]')
+            print(f'{n.name}_c [shape=plain label="const" tooltip="{c}" fontcolor="gray"]')
+            print(f'{n.name}_c -> {n.name} [arrowhead=none color="gray"]')
     def graphviz_cat(self, cat=None):
         if not cat:
             for _,n in self.nodes.items():
@@ -527,7 +527,10 @@ class System:
                 for p,e in zip(n.pred, n.edge_labels):
                     if type(p) == NodeConstant:
                         continue
-                    print(f'{p.name} -> {n.name} [label="{e}"]')
+                    if e != '':
+                        print(f'{p.name} -> {n.name} [label="{e}"]')
+                    else:
+                        print(f'{p.name} -> {n.name} [color="gray"]')
             else:
                 for p in n.pred:
                     if type(p) == NodeConstant:
@@ -723,7 +726,7 @@ def f_sum(*l):
     return sum([float(i) for i in l])
 def f_mul(*l):
     return math.prod([float(i) for i in l])
-def f_minus(original, term):
+def f_diff(original, term):
     return original - term
 def f_clip(c1, c2, ts, t):
     if t <= ts : return c1
