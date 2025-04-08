@@ -48,14 +48,14 @@
 <g id="node2" class="node">
 <title>graze_c</title>
 <g id="a_node2"><a xlink:title="How much a sheep eats = 900 (kg/year)&#10;">
-<text text-anchor="middle" x="372" y="-183.8" font-family="Times,serif" font-size="14.00">const</text>
+<text text-anchor="middle" x="372" y="-183.8" font-family="Times,serif" font-size="14.00" fill="gray">const</text>
 </a>
 </g>
 </g>
 <!-- graze_c&#45;&gt;graze -->
 <g id="edge1" class="edge">
 <title>graze_c&#45;&gt;graze</title>
-<path fill="none" stroke="black" d="M368.63,-179.83C361.97,-166.68 346.99,-137.05 337.47,-118.24"/>
+<path fill="none" stroke="gray" d="M368.63,-179.83C361.97,-166.68 346.99,-137.05 337.47,-118.24"/>
 </g>
 <!-- starvation -->
 <g id="node3" class="node">
@@ -87,14 +87,14 @@
 <g id="node4" class="node">
 <title>starvation_c</title>
 <g id="a_node4"><a xlink:title="How much a sheep eats = 900 (kg/year)&#10;">
-<text text-anchor="middle" x="212" y="-183.8" font-family="Times,serif" font-size="14.00">const</text>
+<text text-anchor="middle" x="212" y="-183.8" font-family="Times,serif" font-size="14.00" fill="gray">const</text>
 </a>
 </g>
 </g>
 <!-- starvation_c&#45;&gt;starvation -->
 <g id="edge2" class="edge">
 <title>starvation_c&#45;&gt;starvation</title>
-<path fill="none" stroke="black" d="M212.39,-179.83C213.16,-166.75 214.89,-137.4 216,-118.58"/>
+<path fill="none" stroke="gray" d="M212.39,-179.83C213.16,-166.75 214.89,-137.4 216,-118.58"/>
 </g>
 <!-- sheep -->
 <g id="node11" class="node">
@@ -116,14 +116,14 @@
 <g id="node6" class="node">
 <title>dd_c</title>
 <g id="a_node6"><a xlink:title="Delay constant = 0 (years)&#10;">
-<text text-anchor="middle" x="403" y="-96.8" font-family="Times,serif" font-size="14.00">const</text>
+<text text-anchor="middle" x="403" y="-96.8" font-family="Times,serif" font-size="14.00" fill="gray">const</text>
 </a>
 </g>
 </g>
 <!-- dd_c&#45;&gt;dd -->
 <g id="edge3" class="edge">
 <title>dd_c&#45;&gt;dd</title>
-<path fill="none" stroke="black" d="M396.89,-92.92C391.38,-87.33 382.81,-79.45 374,-74.5 329.43,-49.44 270.68,-34.65 239.2,-28"/>
+<path fill="none" stroke="gray" d="M396.89,-92.92C391.38,-87.33 382.81,-79.45 374,-74.5 329.43,-49.44 270.68,-34.65 239.2,-28"/>
 </g>
 <!-- births -->
 <g id="node7" class="node">
@@ -145,14 +145,14 @@
 <g id="node8" class="node">
 <title>births_c</title>
 <g id="a_node8"><a xlink:title="Birth rate = 0.5 (n/year/sheep)&#10;">
-<text text-anchor="middle" x="92" y="-333.3" font-family="Times,serif" font-size="14.00">const</text>
+<text text-anchor="middle" x="92" y="-333.3" font-family="Times,serif" font-size="14.00" fill="gray">const</text>
 </a>
 </g>
 </g>
 <!-- births_c&#45;&gt;births -->
 <g id="edge4" class="edge">
 <title>births_c&#45;&gt;births</title>
-<path fill="none" stroke="black" d="M92,-329.06C92,-320.24 92,-304.73 92,-292.66"/>
+<path fill="none" stroke="gray" d="M92,-329.06C92,-320.24 92,-304.73 92,-292.66"/>
 </g>
 <!-- deaths -->
 <g id="node9" class="node">
@@ -174,20 +174,20 @@
 <g id="node10" class="node">
 <title>deaths_c</title>
 <g id="a_node10"><a xlink:title="Death rate = 0.1 (n/year/sheep)&#10;">
-<text text-anchor="middle" x="36" y="-183.8" font-family="Times,serif" font-size="14.00">const</text>
+<text text-anchor="middle" x="36" y="-183.8" font-family="Times,serif" font-size="14.00" fill="gray">const</text>
 </a>
 </g>
 </g>
 <!-- deaths_c&#45;&gt;deaths -->
 <g id="edge5" class="edge">
 <title>deaths_c&#45;&gt;deaths</title>
-<path fill="none" stroke="black" d="M37.73,-179.83C41.11,-166.75 48.71,-137.4 53.58,-118.58"/>
+<path fill="none" stroke="gray" d="M37.73,-179.83C41.11,-166.75 48.71,-137.4 53.58,-118.58"/>
 </g>
 <!-- sheep&#45;&gt;graze -->
 <g id="edge14" class="edge">
 <title>sheep&#45;&gt;graze</title>
-<path fill="none" stroke="black" d="M132.79,-175.32C168.67,-161.86 230.76,-138.56 284,-118.5 286.39,-117.59 288.86,-116.67 291.34,-115.73"/>
-<polygon fill="black" stroke="black" points="292.8,-118.92 300.92,-112.11 290.33,-112.37 292.8,-118.92"/>
+<path fill="none" stroke="gray" d="M132.79,-175.32C168.67,-161.86 230.76,-138.56 284,-118.5 286.39,-117.59 288.86,-116.67 291.34,-115.73"/>
+<polygon fill="gray" stroke="gray" points="292.8,-118.92 300.92,-112.11 290.33,-112.37 292.8,-118.92"/>
 </g>
 <!-- sheep&#45;&gt;starvation -->
 <g id="edge16" class="edge">
@@ -199,14 +199,14 @@
 <!-- sheep&#45;&gt;births -->
 <g id="edge9" class="edge">
 <title>sheep&#45;&gt;births</title>
-<path fill="none" stroke="black" d="M104.28,-205.72C104.68,-215.4 104.66,-227.68 103,-238.5 102.58,-241.23 101.98,-244.05 101.29,-246.85"/>
-<polygon fill="black" stroke="black" points="97.87,-246.07 98.43,-256.65 104.59,-248.03 97.87,-246.07"/>
+<path fill="none" stroke="gray" d="M104.28,-205.72C104.68,-215.4 104.66,-227.68 103,-238.5 102.58,-241.23 101.98,-244.05 101.29,-246.85"/>
+<polygon fill="gray" stroke="gray" points="97.87,-246.07 98.43,-256.65 104.59,-248.03 97.87,-246.07"/>
 </g>
 <!-- sheep&#45;&gt;deaths -->
 <g id="edge10" class="edge">
 <title>sheep&#45;&gt;deaths</title>
-<path fill="none" stroke="black" d="M84.21,-169.29C79.32,-163.99 74.46,-157.86 71,-151.5 67.23,-144.56 64.52,-136.48 62.58,-128.87"/>
-<polygon fill="black" stroke="black" points="65.96,-127.94 60.39,-118.93 59.12,-129.45 65.96,-127.94"/>
+<path fill="none" stroke="gray" d="M84.21,-169.29C79.32,-163.99 74.46,-157.86 71,-151.5 67.23,-144.56 64.52,-136.48 62.58,-128.87"/>
+<polygon fill="gray" stroke="gray" points="65.96,-127.94 60.39,-118.93 59.12,-129.45 65.96,-127.94"/>
 </g>
 <!-- grass&#45;&gt;starvation -->
 <g id="edge15" class="edge">
@@ -235,14 +235,14 @@
 <g id="node14" class="node">
 <title>growth_c</title>
 <g id="a_node14"><a xlink:title="Area where grass grows = 100 (ha)&#10;Grass growth rate = 5500 (kg/ha/year)&#10;">
-<text text-anchor="middle" x="292" y="-333.3" font-family="Times,serif" font-size="14.00">const</text>
+<text text-anchor="middle" x="292" y="-333.3" font-family="Times,serif" font-size="14.00" fill="gray">const</text>
 </a>
 </g>
 </g>
 <!-- growth_c&#45;&gt;growth -->
 <g id="edge6" class="edge">
 <title>growth_c&#45;&gt;growth</title>
-<path fill="none" stroke="black" d="M292,-329.06C292,-320.24 292,-304.73 292,-292.66"/>
+<path fill="none" stroke="gray" d="M292,-329.06C292,-320.24 292,-304.73 292,-292.66"/>
 </g>
 </g>
 </svg>
