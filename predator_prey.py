@@ -11,9 +11,6 @@ import argparse
 import system_dynamic as sd
 dbg = lambda *arg: 0
 
-def f_pop(births, deaths):
-    return births - deaths
-
 def max_pop(s):
     prey = s.nodes["prey"]
     predator = s.nodes["predator"]
@@ -27,26 +24,30 @@ def csl2float(s, l):
 
 def load_model(s, c, i):
     # alpha,beta,gamma,delta in the Lotka–Volterra equations
+    s.default_cat = "prey"
     prbr = s.addConstant("prbr", sd.C, detail='Prey birth rate', val=c[0])
     pdeff = s.addConstant("pdeff", sd.C, detail='Predator effect', val=c[1])
+    s.default_cat = "predator"
     wdr = s.addConstant("pddr", sd.C, detail='Predator death rate', val=c[2])
     preff = s.addConstant("preff", sd.C, detail='Prey effect', val=c[3])
 
-    prey = s.addStock("prey", detail='Prey', val=i[0])
     predator = s.addStock("predator", detail='Predators', val=i[1])
+    s.default_cat = "prey"
+    prey = s.addStock("prey", detail='Prey', val=i[0])
 
     prb = s.addFlow("prey_births")
     prd = s.addFlow("prey_deaths")
+    s.default_cat = "predator"
     pdb = s.addFlow("predator_births")
     pdd = s.addFlow("predator_deaths")
 
-    s.add_equation(sd.f_mul, prb, [prey, prbr])
-    s.add_equation(sd.f_mul, prd, [pdeff, prey, predator])
-    s.add_equation(sd.f_mul, pdb, [preff, predator, prey])
-    s.add_equation(sd.f_mul, pdd, [predator, wdr])
+    s.add_equation(sd.f_mul, prb, [prey, prbr], ['',''])
+    s.add_equation(sd.f_mul, prd, [pdeff, prey, predator], ['','',''])
+    s.add_equation(sd.f_mul, pdb, [preff, predator, prey], ['','',''])
+    s.add_equation(sd.f_mul, pdd, [predator, wdr], ['',''])
 
-    s.add_equation(f_pop, prey, [prb, prd], ['+','-'])
-    s.add_equation(f_pop, predator, [pdb, pdd], ['+','-'])
+    s.add_equation(sd.f_diff, prey, [prb, prd], ['+','-'])
+    s.add_equation(sd.f_diff, predator, [pdb, pdd], ['+','-'])
 
 # ----------------------------------------------------------------------
 # Commands;
@@ -81,9 +82,8 @@ def cmd_graph(args):
     Emit graphviz data for the model
     """
     s = sd.System(time_step=1, end_time=25)
-    load_model(s, [0,0,0,0], [0,0])
+    load_model(s, [1.1,0.4,0.4,0.1], [10,10])
     s.graphviz('predator+prey')
-    sys.exit()
     return 0
 
 # ----------------------------------------------------------------------
