@@ -3,7 +3,7 @@
 """
 Runs the world3 model. Example:
 
-./world3.py --scenario 2 run    # BAU2
+./world3.py --scenario=2 run    # BAU2
 
 The model is based on https://github.com/Juji29/MyWorld3 which is an
 excellent model IMO.
@@ -16,10 +16,10 @@ The model can be executed with (pre-programmed) modifications.
 The github.com/TimSchell98/PyWorld3-03 model can also be used for comparison,
 especially for the "recalibration23" mod described in
 https://onlinelibrary.wiley.com/doi/10.1111/jiec.13442
-This model unfortunately is not correctly updated to the 2003 calibration.
+The PyWorld3-03 model is unfortunately not correctly updated to the 2003
+calibration.
 
 ./world3.py pyworld3 --recal23
-
 """
 import sys
 import os
@@ -230,9 +230,7 @@ def emit_cat(s, nodes, cat):
 # Commands;
 
 def cmd_pyworld3(args):
-    """
-    Run PyWorld3-03 and compare with world3 (dashed lines)
-    """
+    """Run PyWorld3-03 and compare with world3 (dashed lines)"""
     parser = argparse.ArgumentParser(
         prog="pyworld3", description=cmd_pyworld3.__doc__)
     parser.add_argument(
@@ -251,8 +249,9 @@ def cmd_pyworld3(args):
     sd.plot_nodes(s1, s2, nodes=sow_nodes, title=stitle[conf.scenario-1])
 
 def cmd_run(args):
-    """
-    Run a scenario and plot. If mods are used the unmodified run is
+    """Run a scenario and plot.
+
+    If mods are used the unmodified run is
     plotted with dashed lines.
     """
     parser = argparse.ArgumentParser(prog="run", description=cmd_run.__doc__)
@@ -279,9 +278,7 @@ def cmd_run(args):
             s.plot(*ef_nodes, title=stitle[conf.scenario-1], formatter="")
             
 def cmd_bau2(args):
-    """
-    Run BAU2 and BAU and compare
-    """
+    """Run BAU2 and BAU and compare"""
     parser = argparse.ArgumentParser(prog="bau2", description=cmd_bau2.__doc__)
     args = parser.parse_args(args[1:])
     conf.scenario = 2
@@ -293,12 +290,11 @@ def cmd_bau2(args):
     sd.plot_nodes(s, s2, nodes=sow_nodes, title="BAU2 (BAU dashed)")
 
 def cmd_mods(args):
+    """Show help for mods"""
     modify_help()
 
 def cmd_animate(args):
-    """
-    Animate resources from 1e12 (bau1) to 2e12 (bau2)
-    """
+    """Animate resources from 1e12 (bau1) to 2e12 (bau2)"""
     parser = argparse.ArgumentParser(
         prog="animate", description=cmd_animate.__doc__)
     parser.add_argument(
@@ -313,16 +309,18 @@ def cmd_animate(args):
         nr.hist[0] = r
         s.reset()
         s.run()
-        s.plot(*sow_nodes, title="State Of The World", pause=2, formatter="eng")
+        s.plot(*sow_nodes, title="State Of The World", show=False,
+               formatter="eng")
         if args.save:
             i = i + 1
             plt.savefig(f"animate-{i:02d}.svg", format="svg", transparent=True)
+        plt.pause(2)
     plt.show()   # keep the window open after the last iteration
 
 def cmd_graph(args):
-    """
-    Emit a world3 graphviz model graph. Pipe output through
-    "| dot -Tsvg > model.svg" or "| dot -Tx11"
+    """Emit a world3 graphviz model graph.
+    
+    Pipe output through "| dot -Tsvg > model.svg" or "| dot -Tx11"
     The entire graph very complex. For learning, emit categories instead.
     """
     parser = argparse.ArgumentParser(
@@ -338,9 +336,7 @@ def cmd_graph(args):
     s.graphviz(title="World3")
 
 def cmd_demography(args):
-    """
-    Compare population and life expectancy to empirical data
-    """
+    """Compare population and life expectancy to empirical data"""
     parser = argparse.ArgumentParser(
         prog="demography", description=cmd_demography.__doc__)
     args = parser.parse_args(args[1:])
@@ -367,9 +363,7 @@ def cmd_demography(args):
     sd.plot_nodes(s, s2, nodes=nodes, title=stitle[conf.scenario-1], size=(8,4))
 
 def cmd_rates(args):
-    """
-    Compare crude rates to empirical data
-    """
+    """Compare crude rates to empirical data"""
     parser = argparse.ArgumentParser(
         prog="rates", description=cmd_rates.__doc__)
     args = parser.parse_args(args[1:])
@@ -394,8 +388,8 @@ def cmd_rates(args):
     sd.plot_nodes(s, s2, nodes=nodes, title=stitle[conf.scenario-1])
 
 def cmd_hef(args):
-    """
-    Compare Human Ecological Footprint (hef) to empirical data.
+    """Compare Human Ecological Footprint (hef) to empirical data.
+
     Note that hef is a derived value, the simulation is not affected
     """
     parser = argparse.ArgumentParser(
@@ -413,6 +407,12 @@ def cmd_hef(args):
         ("hef",(0,25e9)), ("algha",(0,25e9)), ("whef",(0,25e9)),
         ("walg",(0,25e9))]
     sd.plot_nodes(s, s2, nodes=nodes, title=stitle[conf.scenario-1])
+
+def cmd_categories(args):
+    """Show categories"""
+    s = load_world3()
+    for c in s.categories():
+        print(c)
 
 # ----------------------------------------------------------------------
 # Parse args
@@ -441,7 +441,12 @@ def parse_args():
 
     # Why is this necessary? Bug?
     if not conf.cmd:
-        parser.print_help()
+        print(__doc__)
+        print("Sub-commands:")
+        for c in cmds:
+            print("  ", c)
+            print("    ", globals()["cmd_"+c].__doc__.splitlines()[0])
+        print("\nUse -h to see options")
         sys.exit(0)
     if conf.cmd[0] not in cmds:
         print("Invalid command")

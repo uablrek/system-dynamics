@@ -31,7 +31,7 @@ def cat_grass(s):
         "grass", detail="Ammount of grass", unit="kg", val=i/2, max=i)
     growth = s.addFlow("growth", detail="Grass growth", unit="kg")
     # Equations (edges)
-    s.add_equation(sd.f_mul, growth, [area, rate])
+    s.add_equation(sd.f_mul, growth, [area, rate], ['',''])
     # (this will be modified to include grazing in the final model)
     s.add_equation(sd.f_sum, grass, [growth], ['+'])
 
@@ -52,12 +52,9 @@ def cat_sheep(s, br=0.5, dr=0.1):
     death = s.addFlow("deaths", detail="Sheep died", unit="n/year")
     sheep = s.addStock("sheep", detail='Number of sheep', unit="n", val=100)
     # Equations (edges)
-    s.add_equation(sd.f_mul, birth, [sheep, rbirth])
-    s.add_equation(sd.f_mul, death, [sheep, rdeath])
-    # (this will be modified to include starvation in the final model)
-    def f_sheep(birth, death):
-        return birth - death
-    s.add_equation(f_sheep, sheep, [birth, death], ['+', '-'])
+    s.add_equation(sd.f_mul, birth, [sheep, rbirth], ['',''])
+    s.add_equation(sd.f_mul, death, [sheep, rdeath], ['',''])
+    s.add_equation(sd.f_diff, sheep, [birth, death], ['+', '-'])
 
 def load_model(s, delay=0, br=0.5, dr=0.1):
     cat_grass(s)
@@ -89,8 +86,8 @@ def load_model(s, delay=0, br=0.5, dr=0.1):
     growth = s.nodes["growth"]
     birth = s.nodes["births"]
     death = s.nodes["deaths"]
-    s.add_equation(sd.f_mul, graze, [sheep, eats])
-    s.add_equation(sd.f_minus, grass, [growth, graze], ['+', '-'])
+    s.add_equation(sd.f_mul, graze, [sheep, eats], ['',''])
+    s.add_equation(sd.f_diff, grass, [growth, graze], ['+', '-'])
     s.add_equation(f_starvation, starvation, [grass, sheep, eats], ['-','+',''])
     s.add_equation(dd.f_delayinit, dd, [starvation, D])
     def f_sheep(birth, death, starvation):

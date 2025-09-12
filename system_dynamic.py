@@ -49,9 +49,8 @@
 # - Create/dump/update from dict
 # ...and more
 
-import matplotlib.pyplot as plt
-from matplotlib.ticker import EngFormatter
 import math
+import slplot
 
 C = "CONSTANT"
 CT = "TABLE OF CONSTANTS"
@@ -411,39 +410,23 @@ class System:
 
     # Plot node histories against time (x-axis)
     def plot_nodes(
-            self, nodes, title=None, size=(10,5), pause=0, formatter=None):
-        # https://matplotlib.org/stable/gallery/spines/multiple_yaxis_with_spines.html
-        # https://matplotlib.org/stable/gallery/text_labels_and_annotations/engineering_formatter.html
+            self, nodes, title=None, size=(10,5), formatter=None, show=True):
         if not nodes:
             return
-        fig = plt.gcf()         # (Get Current Figure)
-        fig.set_size_inches(size)
-        fig.clear()
-        if title:
-            fig.suptitle(title)
-        ax = plt.axes()
-        ax.set(xlabel=self.time_unit)
-        ax.grid(axis='x', linestyle=':')
-        times = self.nodes['time'].hist
-        y_offset = 50   # Offset additional Y-axis outward
-        engfmt = None
+        engfmt=None
         if formatter == "eng":
-            engfmt = EngFormatter(places=1, sep="\N{THIN SPACE}")
-            y_offset = 65
-        i = 0
-        n = nodes[0]
-        _plot_node(
-            i, times, ax, n, formatter=engfmt, y_offset=y_offset)
-        for n in nodes[1:]:
-            i = i + 1
-            t = ax.twinx()
-            _plot_node(
-                i, times, t, n, formatter=engfmt, y_offset=y_offset)
-        fig.tight_layout()
-        if pause > 0:
-            plt.pause(pause)
-        else:
-            plt.show()
+            engfmt = slplot.engfmt
+        X = slplot.Axis(self.time_unit, values=self.nodes['time'].hist)
+        Y = []
+        for n in nodes:
+            lim=None
+            if type(n) is tuple:
+                n, lim = n
+            y = slplot.Axis(
+                n.detail, n.unit, n.hist, lim=lim, y_offset=65,
+                formatter=engfmt)
+            Y.append(y)
+        slplot.plot(X, Y, title, size, show)
     # plot_stocks Is a quick an simple way to plot all stocks
     def plot_stocks(self, exclude=['SYSTEM'], title=None, size=(10,5)):
         self.plot_nodes(
@@ -451,7 +434,8 @@ class System:
             title=title, size=size)
     # plot Plot named nodes
     def plot(
-            self, *nodenames, title=None, size=(10,5), pause=0, formatter=None):
+            self, *nodenames, title=None, size=(10,5), show=True,
+            formatter=None):
         """Plot named nodes.
 
         Parameters
@@ -476,7 +460,7 @@ class System:
             else:
                 l.append(self.nodes[x])
         self.plot_nodes(
-            l, title=title, size=size, pause=pause, formatter=formatter)
+            l, title=title, size=size, formatter=formatter, show=show)
 
     # Generate model graph
     def emit_node(self, n, emit_category=False):
@@ -617,54 +601,20 @@ def plot_nodes(
         return
     engfmt=None
     if formatter == "eng":
-        engfmt = EngFormatter(places=1, sep="\N{THIN SPACE}")
-    fig = plt.gcf()         # (Get Current Figure)
-    fig.set_size_inches(size)
-    fig.clear()
-    if title:
-        fig.suptitle(title)
-    ax = plt.axes()
-    ax.set(xlabel=s1.time_unit)
-    ax.grid(axis='x', linestyle=':')
-    times = s1.nodes['time'].hist
-    i = 0
-    n = nodes[0]
-    _plot_node(i, times, ax, __get_node(s1, n), formatter=engfmt)
-    _plot_node(i, times, ax, __get_node(s2, n), add=True)
-    for n in nodes[1:]:
-        i = i + 1
-        t = ax.twinx()
-        _plot_node(i, times, t, __get_node(s1, n), formatter=engfmt)
-        _plot_node(i, times, t, __get_node(s2, n), add=True)
-    fig.tight_layout()
-    plt.show()
-# Plot node help functions
-def _plot_node(i, times, ax, n, y_offset=65, formatter=None, add=False):
-    if add:
+        engfmt = slplot.engfmt
+    X = slplot.Axis(s1.time_unit, values=s1.nodes['time'].hist)
+    Y = []
+    for n in nodes:
+        lim=None
         if type(n) is tuple:
-            n, _ = n
-        ax.plot(times, n.hist, f'C{i}--', linewidth=0.5)
-        return
-    if type(n) is tuple:
-        n, lim = n
-        ax.set_ylim(lim)
-    p, = ax.plot(times, n.hist, f'C{i}')        
-    if formatter:
-        ax.yaxis.set_major_formatter(formatter)
-    if n.unit:
-        ax.set(ylabel=f'{n.detail} ({n.unit})')
-    else:
-        ax.set(ylabel=f'{n.detail}')
-    if i > 1:
-        ax.spines['right'].set_position(("outward", y_offset * (i-1)))
-    ax.yaxis.label.set_color(p.get_color())
-    ax.tick_params(axis='y', colors=p.get_color())
-def __get_node(s, n):
-    if type(n) is tuple:
-        n, lim = n
-        return (s.nodes[n], lim)
-    else:
-        return s.nodes[n]
+            n, lim = n
+        n1 = s1.nodes[n]
+        n2 = s2.nodes[n]
+        y = slplot.Axis(
+            n1.detail, n1.unit, n1.hist, lim=lim, y_offset=65,
+            formatter=engfmt, cvalues=n2.hist)
+        Y.append(y)
+    slplot.plot(X, Y, title, size)
 
 
 # NRMSE isn't really SD, but is used to compare the model

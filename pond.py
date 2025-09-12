@@ -50,6 +50,7 @@ if __name__ == "__main__":
         s.run(20)
         s.plot(
             ("gate",(-1,11)), ("stream",(-1,11)), ("pond",(-2,22)),
-            title=f'Delay constant {c}', size=(8,4), pause=2)
+            title=f'Delay constant {c}', size=(8,4), show=False)
+        plt.pause(2)
         #plt.savefig(f"pond-{c}.svg", format="svg", transparent=True)
     plt.show()   # keep the window open after the last iteration
