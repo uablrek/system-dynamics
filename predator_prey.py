@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # SPDX-License-Identifier: Unlicense
 
 """
