@@ -6,14 +6,15 @@ Python. The aim is to learn how to write a SD model and to modify the
 [world3 model](WORLD3.md). There are several graphic tools for SD, but
 I prefer writing code and generate the model graph afterwards. It's
 faster and more flexible (no tool limitations). Besides, the graphic
-tools are mostly commercial and can't be used on Linux (I use Ubuntu
-24.04 Linux).
+tools are mostly commercial and can't be used on Linux.
 
 For Python the `system_dynamic` module from
 [MyWorld3](https://github.com/Juji29/MyWorld3) is used as a
 library. It is modified to be generic, and functions like plots and
 model graphs are added. The model graphs are generated with
 [graphviz](https://graphviz.org/).
+
+ I use Ubuntu 24.04 Linux. Plots (not graphwiz) has been tested on Windows 11 with VSCode.
 
 
 ## Lotka–Volterra predator–prey model
